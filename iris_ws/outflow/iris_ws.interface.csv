@@ -1,0 +1,79 @@
+
+# Efinity Interface Configuration
+# Version: 2026.1.132.4.5
+# Date: 2026-09-17 02:40
+
+# Copyright (C) 2013 - 2026 Efinix Inc. All rights reserved.
+
+# [required | optional] (input|output|clkout), x, y, z, __bypass__|[~|!]<clock>, [[~|!]<pin_name>] | __vcc__ | __gnd__
+clkout, 202, 0, -1, CLK_25M
+clkout, 6, 0, -1, gpio_clk_27m
+clkout, 199, 0, -1, gpio_clk_27m
+clkout, 219, 171, -1, hdmi_tx_fast_clk
+clkout, 219, 183, -1, hdmi_tx_fast_clk
+clkout, 219, 196, -1, hdmi_tx_fast_clk
+clkout, 219, 211, -1, hdmi_tx_fast_clk
+clkout, 219, 175, -1, hdmi_tx_slow_clk
+clkout, 219, 187, -1, hdmi_tx_slow_clk
+clkout, 219, 200, -1, hdmi_tx_slow_clk
+clkout, 219, 215, -1, hdmi_tx_slow_clk
+input, 0, 164, 1, __bypass__, CLK_25M
+input, 0, 159, 1, __bypass__, gpio_clk_27m
+input, 219, 11, 1, __bypass__, hdmi_tx_locked
+output, 0, 205, 2, __bypass__, led[0]
+output, 0, 46, 2, __bypass__, led[1]
+output, 0, 208, 0, __bypass__, led[2]
+output, 0, 256, 0, __bypass__, led[3]
+input, 0, 4, 3, __bypass__, rxd
+output, 219, 167, 0, __bypass__, tmds_clk_o[0]
+output, 219, 169, 2, __bypass__, tmds_clk_o[1]
+output, 219, 167, 2, __bypass__, tmds_clk_o[2]
+output, 219, 170, 0, __bypass__, tmds_clk_o[3]
+output, 219, 168, 0, __bypass__, tmds_clk_o[4]
+output, 219, 170, 2, __bypass__, tmds_clk_o[5]
+output, 219, 168, 2, __bypass__, tmds_clk_o[6]
+output, 219, 171, 0, __bypass__, tmds_clk_o[7]
+output, 219, 169, 0, __bypass__, tmds_clk_o[8]
+output, 219, 171, 2, __bypass__, tmds_clk_o[9]
+required output, 219, 173, 2, __bypass__, tmds_clk_TX_OE
+required output, 219, 177, 0, __bypass__, tmds_clk_TX_RST
+output, 219, 207, 0, __bypass__, tmds_data0_o[0]
+output, 219, 209, 2, __bypass__, tmds_data0_o[1]
+output, 219, 207, 2, __bypass__, tmds_data0_o[2]
+output, 219, 210, 0, __bypass__, tmds_data0_o[3]
+output, 219, 208, 0, __bypass__, tmds_data0_o[4]
+output, 219, 210, 2, __bypass__, tmds_data0_o[5]
+output, 219, 208, 2, __bypass__, tmds_data0_o[6]
+output, 219, 211, 0, __bypass__, tmds_data0_o[7]
+output, 219, 209, 0, __bypass__, tmds_data0_o[8]
+output, 219, 211, 2, __bypass__, tmds_data0_o[9]
+required output, 219, 213, 2, __bypass__, tmds_data0_TX_OE
+required output, 219, 217, 0, __bypass__, tmds_data0_TX_RST
+output, 219, 179, 0, __bypass__, tmds_data1_o[0]
+output, 219, 181, 2, __bypass__, tmds_data1_o[1]
+output, 219, 179, 2, __bypass__, tmds_data1_o[2]
+output, 219, 182, 0, __bypass__, tmds_data1_o[3]
+output, 219, 180, 0, __bypass__, tmds_data1_o[4]
+output, 219, 182, 2, __bypass__, tmds_data1_o[5]
+output, 219, 180, 2, __bypass__, tmds_data1_o[6]
+output, 219, 183, 0, __bypass__, tmds_data1_o[7]
+output, 219, 181, 0, __bypass__, tmds_data1_o[8]
+output, 219, 183, 2, __bypass__, tmds_data1_o[9]
+required output, 219, 185, 2, __bypass__, tmds_data1_TX_OE
+required output, 219, 189, 0, __bypass__, tmds_data1_TX_RST
+output, 219, 192, 2, __bypass__, tmds_data2_o[0]
+output, 219, 195, 0, __bypass__, tmds_data2_o[1]
+output, 219, 193, 0, __bypass__, tmds_data2_o[2]
+output, 219, 195, 2, __bypass__, tmds_data2_o[3]
+output, 219, 193, 2, __bypass__, tmds_data2_o[4]
+output, 219, 196, 0, __bypass__, tmds_data2_o[5]
+output, 219, 194, 0, __bypass__, tmds_data2_o[6]
+output, 219, 196, 2, __bypass__, tmds_data2_o[7]
+output, 219, 194, 2, __bypass__, tmds_data2_o[8]
+output, 219, 197, 0, __bypass__, tmds_data2_o[9]
+required output, 219, 199, 0, __bypass__, tmds_data2_TX_OE
+required output, 219, 204, 2, __bypass__, tmds_data2_TX_RST
+output, 219, 4, 0, __bypass__, txd
+input, 110, 0, 1, __bypass__, ~FB
+input, 111, 0, 1, __bypass__, ~hdmi_tx_fast_clk
+input, 107, 0, 1, __bypass__, ~hdmi_tx_slow_clk

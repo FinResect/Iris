@@ -1,0 +1,2 @@
+iverilog -s sim -o/home/fr/Program/FPGA/Iris/iris_ws/work_sim/iris_ws.vvp -f/home/fr/Program/FPGA/Iris/iris_ws/work_sim/iris_ws.f
+vvp -l/home/fr/Program/FPGA/Iris/iris_ws/outflow/iris_ws.rtl.simlog /home/fr/Program/FPGA/Iris/iris_ws/work_sim/iris_ws.vvp

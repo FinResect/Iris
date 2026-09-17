@@ -1,0 +1,28 @@
+INFO     : Elitestek FPGA Bitstream Generator.
+INFO     : Version: 2026.1.132.4.5 
+INFO     : Copyright (C) 2013 - 2026 Efinix, Inc. All rights reserved.
+INFO     : Compiled: Aug 31 2026.
+INFO     : Using source file "/home/fr/Program/FPGA/Iris/iris_ws/work_pnr/iris_ws.lbf"
+INFO     : Generating HEX programming file for device "Ti60F225", family "Titanium"
+INFO     : Using periphery source file "outflow/iris_ws.lpf"
+INFO     : Generating bit file: "outflow/iris_ws.bit"
+INFO     : HEX Generation Options Summary:
+INFO     : 	Listing options specified to bitstream generation:
+INFO     : 	bitstream_compression                    = on
+INFO     : 	oscillator_clock_divider                 = DIV8
+INFO     : 	enable_external_master_clock             = off
+INFO     : 	spi_low_power_mode                       = on
+INFO     : 	active_capture_clk_edge                  = posedge
+INFO     : 	enable_remote_update                     = off
+INFO     : 	release_tri_then_reset                   = on
+INFO     : 	enable_seu_crc_check                     = off
+INFO     : 	seu_mode                                 = automatic
+INFO     : 	seu_wait_interval                        = 0xFFFFFF
+INFO     : 	jtag_usercode                            = 0xFFFFFFFF
+INFO     : 	io_weak_pullup                           = on
+INFO     : Finished generating "outflow/iris_ws.hex"
+INFO     : Elitestek Bitstream Generator took 1.221626842 seconds [FlowMsg::StageDuration]
+INFO     :     Elitestek Bitstream Generator took 1.12 seconds (approximately) in total CPU time [FlowMsg::StageDuration::CPUTime]
+INFO     : Elitestek Bitstream Generator virtual memory usage: begin = 35.74 MB, end = 167.972 MB, delta = 132.232 MB [FlowMsg::VMUsage]
+INFO     : Elitestek Bitstream Generator resident set memory usage: begin = 15.848 MB, end = 153.096 MB, delta = 137.248 MB [FlowMsg::RSSUsage]
+INFO     :     Elitestek Bitstream Generator peak resident set memory usage = 153.096 MB [FlowMsg::RSSUsage::Peak]

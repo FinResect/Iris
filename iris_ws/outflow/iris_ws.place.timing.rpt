@@ -1,0 +1,1343 @@
+
+Efinix Static Timing Analysis Report (Preliminary)
+Version: 2026.1.132.4.5
+Date: Thu Sep 17 02:40:46 2026
+
+Copyright (C) 2013 - 2026 Efinix, Inc. All rights reserved.
+
+Top-level Entity Name: iris_ws
+
+SDC Filename: iris_ws.pt.sdc
+
+Timing Model: I3
+	process : typical
+	temperature : -40C to 100C
+	voltage : 0.95 +/-30mV
+	speedgrade : 3
+	technology : t16ff
+	status : final
+
+---------- Table of Contents (begin) ----------
+   1. Clock Frequency Summary
+   2. Clock Relationship Summary
+   3. Path Details for Max Critical Paths
+   4. Path Details for Min Critical Paths
+---------- Table of Contents (end) ------------
+
+---------- 1. Clock Frequency Summary (begin) ----------
+
+User target constrained clocks
+ Clock Name  Period (ns)  Frequency (MHz)    Waveform       Targets
+CLK_25M         40.000        25.000      {0.000 20.000} {CLK_25M}     
+gpio_clk_27m    37.037        27.000      {0.000 18.518} {gpio_clk_27m}
+
+Maximum possible analyzed clocks frequency
+ Clock Name  Period (ns)  Frequency (MHz)     Edge
+gpio_clk_27m    2.325        430.108         (R-R)
+
+Geomean max period: 2.325
+
+---------- Clock Frequency Summary (end) ---------------
+
+---------- 2. Clock Relationship Summary (begin) ----------
+
+Setup (Max) Clock Relationship
+  Launch Clock    Capture Clock   Constraint (ns)     Slack (ns)          Edge
+  gpio_clk_27m     gpio_clk_27m        37.037           34.712           (R-R)
+
+Hold (Min) Clock Relationship
+  Launch Clock    Capture Clock   Constraint (ns)     Slack (ns)          Edge
+  gpio_clk_27m     gpio_clk_27m        0.000            0.179            (R-R)
+
+NOTE: Values are in nanoseconds.
+
+---------- Clock Relationship Summary (end) ---------------
+
+---------- 3. Path Details for Max Critical Paths (begin) ----------
+
+################################################################################
+Path Detail Report (gpio_clk_27m vs gpio_clk_27m)
+################################################################################
+
+
+++++ Path 1 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[15]~FF|SR
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q     EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]          net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                              EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                                EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                         net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                              EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                                EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                         net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                              EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                                EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31       net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                              EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                                EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227               net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:1
+uart_rx_tx_inst/uart_tx01/tx_cnt[15]~FF|SR   EFX_FF        0.104             2.199              17        (67,57)
+
+Capture Clock Path
+                   name                      model name   delay (ns)  cumulative delay (ns) pins on net    location
+=====================================================================================================================
+gpio_clk_27m                                   input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                   input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                   net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:102
+uart_rx_tx_inst/uart_tx01/tx_cnt[15]~FF|CLK    EFX_FF       0.000             2.416             192        (67,57)
+
+++++ Path 2 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[13]~FF|SR
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q     EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]          net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                              EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                                EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                         net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                              EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                                EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                         net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                              EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                                EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31       net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                              EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                                EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227               net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:1
+uart_rx_tx_inst/uart_tx01/tx_cnt[13]~FF|SR   EFX_FF        0.104             2.199              17        (67,55)
+
+Capture Clock Path
+                   name                      model name   delay (ns)  cumulative delay (ns) pins on net    location
+=====================================================================================================================
+gpio_clk_27m                                   input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                   input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                   net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:104
+uart_rx_tx_inst/uart_tx01/tx_cnt[13]~FF|CLK    EFX_FF       0.000             2.416             192        (67,55)
+
+++++ Path 3 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[14]~FF|SR
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q     EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]          net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                              EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                                EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                         net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                              EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                                EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                         net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                              EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                                EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31       net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                              EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                                EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227               net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:0
+uart_rx_tx_inst/uart_tx01/tx_cnt[14]~FF|SR   EFX_FF        0.104             2.199              17        (67,56)
+
+Capture Clock Path
+                   name                      model name   delay (ns)  cumulative delay (ns) pins on net    location
+=====================================================================================================================
+gpio_clk_27m                                   input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                   input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                   net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:103
+uart_rx_tx_inst/uart_tx01/tx_cnt[14]~FF|CLK    EFX_FF       0.000             2.416             192        (67,56)
+
+++++ Path 4 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[0]~FF|SR 
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q    EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]         net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                             EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                               EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                        net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                             EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                               EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                        net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                             EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                               EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31      net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                             EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                               EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227              net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:14
+uart_rx_tx_inst/uart_tx01/tx_cnt[0]~FF|SR   EFX_FF        0.104             2.199              17        (67,42)
+
+Capture Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:117
+uart_rx_tx_inst/uart_tx01/tx_cnt[0]~FF|CLK    EFX_FF       0.000             2.416             192        (67,42)
+
+++++ Path 5 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[12]~FF|SR
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q     EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]          net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                              EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                                EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                         net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                              EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                                EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                         net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                              EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                                EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31       net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                              EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                                EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227               net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:2
+uart_rx_tx_inst/uart_tx01/tx_cnt[12]~FF|SR   EFX_FF        0.104             2.199              17        (67,54)
+
+Capture Clock Path
+                   name                      model name   delay (ns)  cumulative delay (ns) pins on net    location
+=====================================================================================================================
+gpio_clk_27m                                   input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                   input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                   net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:105
+uart_rx_tx_inst/uart_tx01/tx_cnt[12]~FF|CLK    EFX_FF       0.000             2.416             192        (67,54)
+
+++++ Path 6 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[1]~FF|SR 
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q    EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]         net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                             EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                               EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                        net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                             EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                               EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                        net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                             EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                               EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31      net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                             EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                               EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227              net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:13
+uart_rx_tx_inst/uart_tx01/tx_cnt[1]~FF|SR   EFX_FF        0.104             2.199              17        (67,43)
+
+Capture Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:116
+uart_rx_tx_inst/uart_tx01/tx_cnt[1]~FF|CLK    EFX_FF       0.000             2.416             192        (67,43)
+
+++++ Path 7 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[2]~FF|SR 
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q    EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]         net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                             EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                               EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                        net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                             EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                               EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                        net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                             EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                               EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31      net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                             EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                               EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227              net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:12
+uart_rx_tx_inst/uart_tx01/tx_cnt[2]~FF|SR   EFX_FF        0.104             2.199              17        (67,44)
+
+Capture Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:115
+uart_rx_tx_inst/uart_tx01/tx_cnt[2]~FF|CLK    EFX_FF       0.000             2.416             192        (67,44)
+
+++++ Path 8 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[3]~FF|SR 
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q    EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]         net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                             EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                               EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                        net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                             EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                               EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                        net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                             EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                               EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31      net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                             EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                               EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227              net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:11
+uart_rx_tx_inst/uart_tx01/tx_cnt[3]~FF|SR   EFX_FF        0.104             2.199              17        (67,45)
+
+Capture Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:114
+uart_rx_tx_inst/uart_tx01/tx_cnt[3]~FF|CLK    EFX_FF       0.000             2.416             192        (67,45)
+
+++++ Path 9 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[11]~FF|SR
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q     EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]          net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                              EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                                EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                         net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                              EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                                EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                         net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                              EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                                EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31       net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                              EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                                EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227               net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:3
+uart_rx_tx_inst/uart_tx01/tx_cnt[11]~FF|SR   EFX_FF        0.104             2.199              17        (67,53)
+
+Capture Clock Path
+                   name                      model name   delay (ns)  cumulative delay (ns) pins on net    location
+=====================================================================================================================
+gpio_clk_27m                                   input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                   input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                   net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:106
+uart_rx_tx_inst/uart_tx01/tx_cnt[11]~FF|CLK    EFX_FF       0.000             2.416             192        (67,53)
+
+++++ Path 10 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK
+Path End      : uart_rx_tx_inst/uart_tx01/tx_cnt[10]~FF|SR
+Launch Clock  : gpio_clk_27m (RISE)                       
+Capture Clock : gpio_clk_27m (RISE)                       
+Slack         : 34.712 (required time - arrival time)     
+Delay         : 1.965                                     
+
+Logic Level             : 4
+Non-global nets on path : 5
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.416
++ Clock To Q + Data Path Delay : 2.199
+--------------------------------------
+End-of-path arrival time       : 4.615
+
+Constraint                     : 37.037
++ Capture Clock Path Delay     :  2.416
+- Clock Uncertainty            :  0.126
+---------------------------------------
+End-of-path required time      : 39.327
+
+Launch Clock Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+gpio_clk_27m                                  input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                  input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                  net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:109
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|CLK    EFX_FF       0.000             2.416             192        (67,50)
+
+Data Path
+                   name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+====================================================================================================================
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]~FF|Q     EFX_FF        0.130             0.130               3        (67,50)
+uart_rx_tx_inst/uart_tx01/tx_cnt[8]          net           0.214             0.344               3        (67,50)
+   Routing elements:
+      Manhattan distance of X:0, Y:9
+LUT__1984|in[0]                              EFX_LUT4      0.061             0.405               3        (67,41)
+LUT__1984|out                                EFX_LUT4      0.000             0.405               2        (67,41)
+n913                                         net           0.388             0.793               2        (67,41)
+   Routing elements:
+      Manhattan distance of X:2, Y:11
+LUT__1985|in[2]                              EFX_LUT4      0.063             0.856               2        (69,52)
+LUT__1985|out                                EFX_LUT4      0.000             0.856               3        (69,52)
+n914                                         net           0.266             1.122               3        (69,52)
+   Routing elements:
+      Manhattan distance of X:4, Y:2
+LUT__1986|in[2]                              EFX_LUT4      0.061             1.183               3        (65,50)
+LUT__1986|out                                EFX_LUT4      0.000             1.183               6        (65,50)
+uart_rx_tx_inst/uart_tx01/equal_21/n31       net           0.334             1.517               6        (65,50)
+   Routing elements:
+      Manhattan distance of X:3, Y:6
+LUT__1987|in[0]                              EFX_LUT4      0.061             1.578               6        (62,56)
+LUT__1987|out                                EFX_LUT4      0.000             1.578              17        (62,56)
+uart_rx_tx_inst/uart_tx01/n227               net           0.517             2.095              17        (62,56)
+   Routing elements:
+      Manhattan distance of X:5, Y:4
+uart_rx_tx_inst/uart_tx01/tx_cnt[10]~FF|SR   EFX_FF        0.104             2.199              17        (67,52)
+
+Capture Clock Path
+                   name                      model name   delay (ns)  cumulative delay (ns) pins on net    location
+=====================================================================================================================
+gpio_clk_27m                                   input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                   input        0.126             0.126             192        (0,159)
+gpio_clk_27m                                   net          2.290             2.416             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:67, Y:107
+uart_rx_tx_inst/uart_tx01/tx_cnt[10]~FF|CLK    EFX_FF       0.000             2.416             192        (67,52)
+
+---------- Path Details for Max Critical Paths (end) ---------------
+
+---------- 4. Path Details for Min Critical Paths (begin) ----------
+
+################################################################################
+Path Detail Report (gpio_clk_27m vs gpio_clk_27m)
+################################################################################
+
+
+++++ Path 1 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/WrNextAddr[4]~FF|CLK   
+Path End      : DC_FIFO_inst/WrNextAddr[4]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:115
+DC_FIFO_inst/WrNextAddr[4]~FF|CLK    EFX_FF       0.000             2.360             192        (41,44)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+DC_FIFO_inst/WrNextAddr[4]~FF|Q             EFX_FF        0.072             0.072              6         (41,44)
+DC_FIFO_inst/WrNextAddr[4]                  net           0.143             0.215              6         (41,44)
+LUT__1901|in[3]                             EFX_LUT4      0.034             0.249              6         (41,44)
+LUT__1901|out                               EFX_LUT4      0.000             0.249              2         (41,44)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/n139   net           0.000             0.249              2         (41,44)
+DC_FIFO_inst/WrNextAddr[4]~FF|D             EFX_FF        0.000             0.249              2         (41,44)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:115
+DC_FIFO_inst/WrNextAddr[4]~FF|CLK    EFX_FF       0.000             2.360             192        (41,44)
+
+++++ Path 2 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/WrNextAddr[6]~FF|CLK   
+Path End      : DC_FIFO_inst/WrNextAddr[6]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:44, Y:112
+DC_FIFO_inst/WrNextAddr[6]~FF|CLK    EFX_FF       0.000             2.360             192        (44,47)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+DC_FIFO_inst/WrNextAddr[6]~FF|Q             EFX_FF        0.072             0.072              5         (44,47)
+DC_FIFO_inst/WrNextAddr[6]                  net           0.143             0.215              5         (44,47)
+LUT__1903|in[1]                             EFX_LUT4      0.034             0.249              5         (44,47)
+LUT__1903|out                               EFX_LUT4      0.000             0.249              2         (44,47)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/n149   net           0.000             0.249              2         (44,47)
+DC_FIFO_inst/WrNextAddr[6]~FF|D             EFX_FF        0.000             0.249              2         (44,47)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:44, Y:112
+DC_FIFO_inst/WrNextAddr[6]~FF|CLK    EFX_FF       0.000             2.360             192        (44,47)
+
+++++ Path 3 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|CLK
+Path End      : DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|D  
+Launch Clock  : gpio_clk_27m (RISE)                                   
+Capture Clock : gpio_clk_27m (RISE)                                   
+Slack         : 0.179 (arrival time - required time)                  
+Delay         : 0.177                                                 
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+                         name                           model name   delay (ns)  cumulative delay (ns) pins on net    location
+================================================================================================================================
+gpio_clk_27m                                              input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                              input        0.070             0.070             192        (0,159)
+gpio_clk_27m                                              net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:105
+DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|CLK    EFX_FF       0.000             2.360             192        (41,54)
+
+Data Path
+                        name                          model name   delay (ns)  cumulative delay (ns) pins on net    location
+==============================================================================================================================
+DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|Q   EFX_FF        0.072             0.072              6         (41,54)
+DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/GrayCnt[0]        net           0.143             0.215              6         (41,54)
+LUT__1920|in[1]                                        EFX_LUT4      0.034             0.249              6         (41,54)
+LUT__1920|out                                          EFX_LUT4      0.000             0.249              2         (41,54)
+DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/n114              net           0.000             0.249              2         (41,54)
+DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|D   EFX_FF        0.000             0.249              2         (41,54)
+
+Capture Clock Path
+                         name                           model name   delay (ns)  cumulative delay (ns) pins on net    location
+================================================================================================================================
+gpio_clk_27m                                              input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                              input        0.070             0.070             192        (0,159)
+gpio_clk_27m                                              net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:105
+DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|CLK    EFX_FF       0.000             2.360             192        (41,54)
+
+++++ Path 4 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|CLK
+Path End      : DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|D  
+Launch Clock  : gpio_clk_27m (RISE)                                   
+Capture Clock : gpio_clk_27m (RISE)                                   
+Slack         : 0.179 (arrival time - required time)                  
+Delay         : 0.177                                                 
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+                         name                           model name   delay (ns)  cumulative delay (ns) pins on net    location
+================================================================================================================================
+gpio_clk_27m                                              input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                              input        0.070             0.070             192        (0,159)
+gpio_clk_27m                                              net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:113
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|CLK    EFX_FF       0.000             2.360             192        (41,46)
+
+Data Path
+                        name                          model name   delay (ns)  cumulative delay (ns) pins on net    location
+==============================================================================================================================
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|Q   EFX_FF        0.072             0.072              6         (41,46)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/GrayCnt[0]        net           0.143             0.215              6         (41,46)
+LUT__1907|in[1]                                        EFX_LUT4      0.034             0.249              6         (41,46)
+LUT__1907|out                                          EFX_LUT4      0.000             0.249              2         (41,46)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/n114              net           0.000             0.249              2         (41,46)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|D   EFX_FF        0.000             0.249              2         (41,46)
+
+Capture Clock Path
+                         name                           model name   delay (ns)  cumulative delay (ns) pins on net    location
+================================================================================================================================
+gpio_clk_27m                                              input        0.000             0.000               0        (0,159)
+gpio_clk_27m                                              input        0.070             0.070             192        (0,159)
+gpio_clk_27m                                              net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:113
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/GrayCnt[0]~FF|CLK    EFX_FF       0.000             2.360             192        (41,46)
+
+++++ Path 5 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/WrNextAddr[1]~FF|CLK   
+Path End      : DC_FIFO_inst/WrNextAddr[1]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:40, Y:110
+DC_FIFO_inst/WrNextAddr[1]~FF|CLK    EFX_FF       0.000             2.360             192        (40,49)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+DC_FIFO_inst/WrNextAddr[1]~FF|Q             EFX_FF        0.072             0.072              6         (40,49)
+DC_FIFO_inst/WrNextAddr[1]                  net           0.143             0.215              6         (40,49)
+LUT__1895|in[3]                             EFX_LUT4      0.034             0.249              6         (40,49)
+LUT__1895|out                               EFX_LUT4      0.000             0.249              2         (40,49)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/n124   net           0.000             0.249              2         (40,49)
+DC_FIFO_inst/WrNextAddr[1]~FF|D             EFX_FF        0.000             0.249              2         (40,49)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:40, Y:110
+DC_FIFO_inst/WrNextAddr[1]~FF|CLK    EFX_FF       0.000             2.360             192        (40,49)
+
+++++ Path 6 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/WrNextAddr[5]~FF|CLK   
+Path End      : DC_FIFO_inst/WrNextAddr[5]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:46, Y:106
+DC_FIFO_inst/WrNextAddr[5]~FF|CLK    EFX_FF       0.000             2.360             192        (46,53)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+DC_FIFO_inst/WrNextAddr[5]~FF|Q             EFX_FF        0.072             0.072              4         (46,53)
+DC_FIFO_inst/WrNextAddr[5]                  net           0.143             0.215              4         (46,53)
+LUT__1900|in[1]                             EFX_LUT4      0.034             0.249              4         (46,53)
+LUT__1900|out                               EFX_LUT4      0.000             0.249              2         (46,53)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/n144   net           0.000             0.249              2         (46,53)
+DC_FIFO_inst/WrNextAddr[5]~FF|D             EFX_FF        0.000             0.249              2         (46,53)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:46, Y:106
+DC_FIFO_inst/WrNextAddr[5]~FF|CLK    EFX_FF       0.000             2.360             192        (46,53)
+
+++++ Path 7 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/WrNextAddr[2]~FF|CLK   
+Path End      : DC_FIFO_inst/WrNextAddr[2]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:53, Y:112
+DC_FIFO_inst/WrNextAddr[2]~FF|CLK    EFX_FF       0.000             2.360             192        (53,47)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+DC_FIFO_inst/WrNextAddr[2]~FF|Q             EFX_FF        0.072             0.072              8         (53,47)
+DC_FIFO_inst/WrNextAddr[2]                  net           0.143             0.215              8         (53,47)
+LUT__1906|in[1]                             EFX_LUT4      0.034             0.249              8         (53,47)
+LUT__1906|out                               EFX_LUT4      0.000             0.249              2         (53,47)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/n129   net           0.000             0.249              2         (53,47)
+DC_FIFO_inst/WrNextAddr[2]~FF|D             EFX_FF        0.000             0.249              2         (53,47)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:53, Y:112
+DC_FIFO_inst/WrNextAddr[2]~FF|CLK    EFX_FF       0.000             2.360             192        (53,47)
+
+++++ Path 8 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/RdNextAddr[0]~FF|CLK   
+Path End      : DC_FIFO_inst/RdNextAddr[0]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:112
+DC_FIFO_inst/RdNextAddr[0]~FF|CLK    EFX_FF       0.000             2.360             192        (41,47)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+DC_FIFO_inst/RdNextAddr[0]~FF|Q             EFX_FF        0.072             0.072              7         (41,47)
+DC_FIFO_inst/RdNextAddr[0]                  net           0.143             0.215              7         (41,47)
+LUT__1917|in[2]                             EFX_LUT4      0.034             0.249              7         (41,47)
+LUT__1917|out                               EFX_LUT4      0.000             0.249              2         (41,47)
+DC_FIFO_inst/U2_RdAddrCnt/U1_AddrCnt/n119   net           0.000             0.249              2         (41,47)
+DC_FIFO_inst/RdNextAddr[0]~FF|D             EFX_FF        0.000             0.249              2         (41,47)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:41, Y:112
+DC_FIFO_inst/RdNextAddr[0]~FF|CLK    EFX_FF       0.000             2.360             192        (41,47)
+
+++++ Path 9 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/WrNextAddr[7]~FF|CLK   
+Path End      : DC_FIFO_inst/WrNextAddr[7]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:47, Y:117
+DC_FIFO_inst/WrNextAddr[7]~FF|CLK    EFX_FF       0.000             2.360             192        (47,42)
+
+Data Path
+             name                model name   delay (ns)  cumulative delay (ns) pins on net    location
+=========================================================================================================
+DC_FIFO_inst/WrNextAddr[7]~FF|Q   EFX_FF        0.072             0.072              4         (47,42)
+DC_FIFO_inst/WrNextAddr[7]        net           0.143             0.215              4         (47,42)
+LUT__1898|in[2]                   EFX_LUT4      0.034             0.249              4         (47,42)
+LUT__1898|out                     EFX_LUT4      0.000             0.249              2         (47,42)
+DC_FIFO_inst/U1_WrAddrCnt/n87     net           0.000             0.249              2         (47,42)
+DC_FIFO_inst/WrNextAddr[7]~FF|D   EFX_FF        0.000             0.249              2         (47,42)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:47, Y:117
+DC_FIFO_inst/WrNextAddr[7]~FF|CLK    EFX_FF       0.000             2.360             192        (47,42)
+
+++++ Path 10 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Path Begin    : DC_FIFO_inst/WrNextAddr[0]~FF|CLK   
+Path End      : DC_FIFO_inst/WrNextAddr[0]~FF|D     
+Launch Clock  : gpio_clk_27m (RISE)                 
+Capture Clock : gpio_clk_27m (RISE)                 
+Slack         : 0.179 (arrival time - required time)
+Delay         : 0.177                               
+
+Logic Level             : 1
+Non-global nets on path : 2
+Global nets on path     : 0
+
+Launch Clock Path Delay        : 2.360
++ Clock To Q + Data Path Delay : 0.249
+--------------------------------------
+End-of-path arrival time       : 2.609
+
+Constraint                     : 0.000
++ Capture Clock Path Delay     : 2.360
++ Clock Uncertainty            : 0.070
+--------------------------------------
+End-of-path required time      : 2.430
+
+Launch Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:40, Y:113
+DC_FIFO_inst/WrNextAddr[0]~FF|CLK    EFX_FF       0.000             2.360             192        (40,46)
+
+Data Path
+                  name                     model name   delay (ns)  cumulative delay (ns) pins on net    location
+===================================================================================================================
+DC_FIFO_inst/WrNextAddr[0]~FF|Q             EFX_FF        0.072             0.072              7         (40,46)
+DC_FIFO_inst/WrNextAddr[0]                  net           0.143             0.215              7         (40,46)
+LUT__1904|in[2]                             EFX_LUT4      0.034             0.249              7         (40,46)
+LUT__1904|out                               EFX_LUT4      0.000             0.249              2         (40,46)
+DC_FIFO_inst/U1_WrAddrCnt/U1_AddrCnt/n119   net           0.000             0.249              2         (40,46)
+DC_FIFO_inst/WrNextAddr[0]~FF|D             EFX_FF        0.000             0.249              2         (40,46)
+
+Capture Clock Path
+              name                 model name   delay (ns)  cumulative delay (ns) pins on net    location
+===========================================================================================================
+gpio_clk_27m                         input        0.000             0.000               0        (0,159)
+gpio_clk_27m                         input        0.070             0.070             192        (0,159)
+gpio_clk_27m                         net          2.290             2.360             192        (0,159)
+   Routing elements:
+      Manhattan distance of X:40, Y:113
+DC_FIFO_inst/WrNextAddr[0]~FF|CLK    EFX_FF       0.000             2.360             192        (40,46)
+
+---------- Path Details for Min Critical Paths (end) ---------------
+

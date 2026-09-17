@@ -1,0 +1,145 @@
+CellSiteInst {
+  cell: "CLK_25M"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_08_CLK1_P"
+}
+CellSiteInst {
+  cell: "gpio_clk_27m"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_10_CLK3_P"
+}
+CellSiteInst {
+  cell: "led[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_12"
+}
+CellSiteInst {
+  cell: "led[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_02_CSI"
+}
+CellSiteInst {
+  cell: "led[2]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_N_12"
+}
+CellSiteInst {
+  cell: "led[3]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_15_NSTATUS"
+}
+CellSiteInst {
+  cell: "rxd"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_02"
+}
+CellSiteInst {
+  cell: "tmds_clk_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_10_CLK9_N"
+}
+CellSiteInst {
+  cell: "tmds_clk_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_10_CLK9_P"
+}
+CellSiteInst {
+  cell: "tmds_data0_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_13"
+}
+CellSiteInst {
+  cell: "tmds_data0_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_13"
+}
+CellSiteInst {
+  cell: "tmds_data1_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_11_CLK8_N"
+}
+CellSiteInst {
+  cell: "tmds_data1_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_11_CLK8_P"
+}
+CellSiteInst {
+  cell: "tmds_data2_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_12"
+}
+CellSiteInst {
+  cell: "tmds_data2_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_12"
+}
+CellSiteInst {
+  cell: "txd"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_28"
+}
+CellSiteInst {
+  cell: "CLK_25M~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_08"
+}
+CellSiteInst {
+  cell: "gpio_clk_27m~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_10"
+}
+CellSiteInst {
+  cell: "led[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_12"
+}
+CellSiteInst {
+  cell: "led[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_02"
+}
+CellSiteInst {
+  cell: "led[2]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOL_PN_12"
+}
+CellSiteInst {
+  cell: "led[3]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_15"
+}
+CellSiteInst {
+  cell: "pll_hdmi~PLL"
+  block_and_site_inst: "PLL/PLL_SLOT0"
+  block_inst: "PLL_BR0"
+}
+CellSiteInst {
+  cell: "rxd~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOL_02"
+}
+CellSiteInst {
+  cell: "tmds_clk~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_10"
+}
+CellSiteInst {
+  cell: "tmds_data0~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_13"
+}
+CellSiteInst {
+  cell: "tmds_data1~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_11"
+}
+CellSiteInst {
+  cell: "tmds_data2~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_12"
+}
+CellSiteInst {
+  cell: "txd~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_28"
+}

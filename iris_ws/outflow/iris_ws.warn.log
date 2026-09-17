@@ -1,0 +1,56 @@
+
+///////////////////////////////////
+// Efinity Synthesis Started 
+// Sep 17, 2026 02:37:07
+///////////////////////////////////
+
+[EFX-0011 VERI-WARNING] parameter 'TCo_C' becomes localparam in 'GrayDecode' with formal parameter declaration list (VERI-1199) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/DC_FIFO_v3p7.v:778)
+[EFX-0011 VERI-WARNING] port 'i_cfg_vid' remains unconnected for this instance (VERI-1927) (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:164)
+[EFX-0011 VERI-WARNING] expression size 17 truncated to fit in target size 16 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:68)
+[EFX-0011 VERI-WARNING] expression size 2 truncated to fit in target size 1 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:106)
+[EFX-0011 VERI-WARNING] expression size 2 truncated to fit in target size 1 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:108)
+[EFX-0011 VERI-WARNING] net 'frame_error_r[1]' does not have a driver (VDB-1002) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:188)
+[EFX-0011 VERI-WARNING] expression size 9 truncated to fit in target size 8 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/hdmi/encode.v:167)
+[EFX-0011 VERI-WARNING] input port 'i_cfg_vid[23]' is not connected on this instance (VDB-1013) (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0200 WARNING] Removing redundant signal : i[31:0]. (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/DC_FIFO_v3p7.v:785)
+[EFX-0200 WARNING] Removing redundant signal : bit_cnt[3:0]. (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_tx.v:78)
+[EFX-0200 WARNING] Removing redundant signal : de_r1. (/home/fr/Program/FPGA/Iris/iris_ws/src/hdmi/color_bar_rgb.v:82)
+[EFX-0200 WARNING] Removing redundant signal : i_cfg_vid[23:0]. (/home/fr/Program/FPGA/Iris/iris_ws/src/hdmi/color_bar_rgb.v:23)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[23]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[22]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[21]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[20]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[19]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[18]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[17]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[16]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[15]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[14]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+
+///////////////////////////////////
+// Efinity Synthesis Started 
+// Sep 17, 2026 02:37:35
+///////////////////////////////////
+
+[EFX-0011 VERI-WARNING] parameter 'TCo_C' becomes localparam in 'GrayDecode' with formal parameter declaration list (VERI-1199) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/DC_FIFO_v3p7.v:778)
+[EFX-0011 VERI-WARNING] port 'i_cfg_vid' remains unconnected for this instance (VERI-1927) (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:164)
+[EFX-0011 VERI-WARNING] expression size 17 truncated to fit in target size 16 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:68)
+[EFX-0011 VERI-WARNING] expression size 2 truncated to fit in target size 1 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:106)
+[EFX-0011 VERI-WARNING] expression size 2 truncated to fit in target size 1 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:108)
+[EFX-0011 VERI-WARNING] net 'frame_error_r[1]' does not have a driver (VDB-1002) (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_rx.v:188)
+[EFX-0011 VERI-WARNING] expression size 9 truncated to fit in target size 8 (VERI-1209) (/home/fr/Program/FPGA/Iris/iris_ws/src/hdmi/encode.v:167)
+[EFX-0011 VERI-WARNING] input port 'i_cfg_vid[23]' is not connected on this instance (VDB-1013) (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0200 WARNING] Removing redundant signal : i[31:0]. (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/DC_FIFO_v3p7.v:785)
+[EFX-0200 WARNING] Removing redundant signal : bit_cnt[3:0]. (/home/fr/Program/FPGA/Iris/iris_ws/src/uart/uart_tx.v:78)
+[EFX-0200 WARNING] Removing redundant signal : de_r1. (/home/fr/Program/FPGA/Iris/iris_ws/src/hdmi/color_bar_rgb.v:82)
+[EFX-0200 WARNING] Removing redundant signal : i_cfg_vid[23:0]. (/home/fr/Program/FPGA/Iris/iris_ws/src/hdmi/color_bar_rgb.v:23)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[23]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[22]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[21]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[20]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[19]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[18]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[17]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[16]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[15]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
+[EFX-0201 WARNING] Re-wiring to GND non-driven net/port 'i_cfg_vid[14]' in module 'color_bar_rgb(SYMBOL_WIDTH=8,SYMBOL_NUM=3,PAR_PIXEL_NUM=1,HFP=8'b01111000,HST=8'b010,HACT=12'b011110000000,HBP=8'b01011000,VFP=8'b010100,VST=8'b010,VACT=12'b011000000000,VBP=8'b010100,TEST_MODE=2'b10)'. (/home/fr/Program/FPGA/Iris/iris_ws/src/top.v:157)
