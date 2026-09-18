@@ -15,6 +15,22 @@
         <efx:design_file name="src/uart/uart_tx.v" version="default" library="default" />
         <efx:design_file name="src/uart/uart_rx_tx.v" version="default" library="default" />
         <efx:design_file name="src/uart/DC_FIFO_v3p7.v" version="default" library="default" />
+        <efx:design_file name="src/mipi/mipi_rx.v" version="default" library="default" />
+        <efx:design_file name="src/mipi/cam_capture.v" version="default" library="default" />
+        <efx:design_file name="src/video/true_dual_port_ram.v" version="default" library="default" />
+        <efx:design_file name="src/video/frame_buf.v" version="default" library="default" />
+        <efx:design_file name="src/video/display_ctrl.v" version="default" library="default" />
+        <efx:design_file name="src/mipi/sc431hai_i2c_rom.v" version="default" library="default" />
+        <efx:design_file name="src/mipi/sc431hai_init.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/timescale.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_master_defines.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_master_bit_ctrl.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_master_byte_ctrl.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_master_top.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_16addr_8data.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_8addr_8data.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_master_reg_set.v" version="default" library="default" />
+        <efx:design_file name="src/i2c/i2c_subsystem.v" version="default" library="default" />
         <efx:top_vhdl_arch name="" />
         <efx:msg_config name="" />
         <efx:partition_definitions name="" />
@@ -31,10 +47,16 @@
     <efx:sim_info />
     <efx:misc_info />
     <efx:ooc_info />
-    <efx:ip_info />
+    <efx:ip_info>
+        <efx:ip instance_name="csi_rx_controller" path="ip/csi_rx_59/settings.json" ooc="false">
+            <efx:ip_src_file name="csi_rx_controller.sv" />
+        </efx:ip>
+    </efx:ip_info>
     <efx:synthesis tool_name="efx_map">
         <efx:param name="work_dir" value="work_syn" value_type="e_string" />
         <efx:param name="write_efx_verilog" value="on" value_type="e_bool" />
+        <efx:param name="include" value="ip/csi_rx_59" value_type="e_string" />
+        <efx:param name="include" value="src/i2c" value_type="e_string" />
         <efx:param name="allow-const-ram-index" value="0" value_type="e_option" />
         <efx:param name="blackbox-error" value="1" value_type="e_option" />
         <efx:param name="blast_const_operand_adders" value="1" value_type="e_option" />
