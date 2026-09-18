@@ -1,0 +1,4 @@
+# Efinix 下载器（FT4232H / FT2232H）USB 设备节点授权
+# 故意不写 GROUP=，避开 plugdev 非系统组 / 组解析失败的问题
+SUBSYSTEM=="usb", ATTR{idVendor}=="0403", ATTR{idProduct}=="6011", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE="0666"

@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-MODE="${1:-active}"   # active=SPI flash(掉电保持) | jtag=SRAM(掉电丢失) | passive/jtag_bridge
+# jtag_bridge=经 JTAG 桥烧 SPI flash(掉电保持,默认) | jtag=写 SRAM(掉电丢失,快)
+# active=SPI 直连(板载 USB 下载器不支持,需外接下载器接 J6) | passive
+MODE="${1:-jtag_bridge}"
+
+# jtag_bridge 需先让 FPGA 跑 JTAG Bridge 位流；Efinity 自带位流按 <IDCODE> 命名。
+# Ti60F225 的 IDCODE = 0x10660A79。可用 IRIS_BRIDGE_BIT 覆盖。
+BRIDGE_BIT="${IRIS_BRIDGE_BIT:-}"
 
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 source "$SCRIPT_DIR/efinity-env"
@@ -9,6 +15,36 @@ source "$SCRIPT_DIR/efinity-env"
 PROJ_DIR="$SCRIPT_DIR/../iris_ws"
 cd "$PROJ_DIR"
 
+if [[ -z "$BRIDGE_BIT" ]]; then
+    BRIDGE_BIT="$EFINITY_HOME/pgm/fli/titanium/u10660A79.bit"
+fi
+
+# CLI 不会自动加载 JTAG Bridge 位流（GUI 的 "Auto configure JTAG Bridge Image" 才会），
+# 所以这里先烧桥位流，再经桥烧 flash。
+if [[ "$MODE" == "jtag_bridge" || "$MODE" == "jtag_bridge_x8" ]]; then
+    echo "==> 加载 JTAG Bridge 位流：$BRIDGE_BIT"
+    if [[ ! -f "$BRIDGE_BIT" ]]; then
+        echo "❌ 找不到桥位流：$BRIDGE_BIT" >&2
+        echo "   可用 IRIS_BRIDGE_BIT=<path> 指定（见 $EFINITY_HOME/pgm/fli/titanium/）" >&2
+        exit 1
+    fi
+    if ! efx_run --prj iris_ws -f program --pgm_opts "mode=jtag" --pgm_opts "source=$BRIDGE_BIT"; then
+        echo "❌ 加载 JTAG Bridge 位流失败" >&2
+        exit 1
+    fi
+fi
+
 echo "==> 烧录 mode=$MODE"
-efx_run --prj iris_ws -f program --pgm_opts "mode=$MODE"
+if ! efx_run --prj iris_ws -f program --pgm_opts "mode=$MODE"; then
+    echo "❌ 烧录失败（详见上方输出）" >&2
+    echo "   常见原因：" >&2
+    echo "   1) USB 权限：设备节点非 rw → 运行 .script/setup-usb（需 sudo），再拔插一次 USB" >&2
+    echo "   2) 模式选错：板载 USB 下载器请用 jtag_bridge / jtag；active(SPI 直连) 需外接下载器到 J6" >&2
+    echo "   3) jtag_bridge 失败：桥位流与板卡 SPI 引脚可能不匹配，可改用 .script/sync-iris jtag" >&2
+    exit 1
+fi
+
 echo "烧录完成"
+if [[ "$MODE" == "jtag_bridge" || "$MODE" == "jtag_bridge_x8" ]]; then
+    echo "提示：断电重上电可从 flash 自启动；立即看效果可再运行 .script/sync-iris jtag"
+fi

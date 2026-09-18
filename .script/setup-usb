@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+DEST="/etc/udev/rules.d/80-efx-pgm.rules"
+
+echo "==> 安装 udev 规则到 $DEST"
+sudo cp -f "$SCRIPT_DIR/80-efx-pgm.rules" "$DEST"
+
+echo "==> 重载 udev 并触发"
+sudo udevadm control --reload
+sudo udevadm trigger --action=change --subsystem-match=usb
+
+echo "==> 当前 Efinix 下载器节点权限（应为 crw-rw-rw-）："
+for p in /dev/bus/usb/*/*; do
+    if lsusb -D "$p" 2>/dev/null | grep -qE "0403:601[01]"; then ls -l "$p"; fi
+done
+echo
+echo "若上面不是 crw-rw-rw-，拔插一次 USB 线后重试。"

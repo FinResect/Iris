@@ -19,4 +19,19 @@ if [[ ! -f "$SETUP_SH" ]]; then
     rm -f "$CONF_FILE"
     exit 1
 fi
+# 官方 setup.sh 未按 strict-mode 编写（含 `ldd|head` 等良性管道，
+# 上游可能收到 SIGPIPE），故临时关闭 errexit/nounset/pipefail 再 source。
+# 注意：不能用 `_s=$(set +o)` 保存——bash 在 $( ) 子 shell 里不继承 -e，
+# 会把 errexit 误存为关闭状态。必须显式记录。
+_saved_e=0; _saved_u=0; _saved_pf=0
+if [[ $- == *e* ]]; then _saved_e=1; fi
+if [[ $- == *u* ]]; then _saved_u=1; fi
+if [[ -o pipefail ]]; then _saved_pf=1; fi
+
+set +e +u
+set +o pipefail
 source "$SETUP_SH"
+
+(( _saved_u ))  && set -u          || true
+(( _saved_pf )) && set -o pipefail || true
+(( _saved_e ))  && set -e          || true
