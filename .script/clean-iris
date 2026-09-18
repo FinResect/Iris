@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+PROJ_DIR="$SCRIPT_DIR/../iris_ws"
+cd "$PROJ_DIR"
+
+echo "==> 清理编译产物"
+rm -rf outflow work_syn work_pnr work_sim work_dbg
+rm -f  iris_ws.pt.sdc
+echo "完成：已删除 outflow/ work_syn/ work_pnr/ work_sim/ work_dbg/ iris_ws.pt.sdc"
+echo "保留：iris_ws.xml  iris_ws.peri.xml  src/"

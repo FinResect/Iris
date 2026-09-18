@@ -1,1 +1,5 @@
 Ti60F225_DemoBoard_v4/*
+path/
+iris_ws/outflow/
+iris_ws/work_*/
+iris_ws/iris_ws.pt.sdc

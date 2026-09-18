@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+MODE="${1:-active}"   # active=SPI flash(掉电保持) | jtag=SRAM(掉电丢失) | passive/jtag_bridge
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+source "$SCRIPT_DIR/efinity-env"
+
+PROJ_DIR="$SCRIPT_DIR/../iris_ws"
+cd "$PROJ_DIR"
+
+echo "==> 烧录 mode=$MODE"
+efx_run --prj iris_ws -f program --pgm_opts "mode=$MODE"
+echo "烧录完成"
