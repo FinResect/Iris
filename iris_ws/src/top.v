@@ -95,13 +95,13 @@ uart_rx_tx #(
 // HDMI color bar TX (replicate 03 demo)
 //=====================================================================
 parameter   MAX_HRES    = 12'd1920;
-parameter   MAX_VRES    = 12'd1536;
-parameter   HSP         = 8'd2;
-parameter   HBP         = 8'd88;
-parameter   HFP         = 8'd120;
-parameter   VSP         = 8'd2;
-parameter   VBP         = 8'd20;
-parameter   VFP         = 8'd20;
+parameter   MAX_VRES    = 12'd1080;
+parameter   HSP         = 8'd44;
+parameter   HBP         = 8'd148;
+parameter   HFP         = 8'd88;
+parameter   VSP         = 8'd5;
+parameter   VBP         = 8'd36;
+parameter   VFP         = 8'd4;
 
 wire        video_hs;
 wire        video_vs;
