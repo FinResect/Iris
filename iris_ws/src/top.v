@@ -1,11 +1,53 @@
 //=====================================================================
-// L0 merged top: LED blink + UART loopback + HDMI color bar
+// L0 merged top: official CSI->frame buffer->debayer->HDMI path.
+//   MIPI RAW10 -> sensor_clipper -> frame_buffer (Bayer mosaic in DDR3) ->
+//   debayer (display domain) -> RGB888 -> TMDS/HDMI 1080p.
 //=====================================================================
 
 module top
 (
     ////////////////////////    CLOCK     ////////////////////////
     input                       gpio_clk_27m,     // 27MHz board clock (UART + LED)
+
+    ////////////////////////    DDR3 clocks    ////////////////////////
+    input                       core_clk,          // 100MHz system / AXI clock
+    input                       core_pll_locked,
+    input                       ddr_pll_locked,
+    input                       ddr_tdqss_clk,     // 400MHz
+    input                       ddr_tac_clk,       // 400MHz (dyn phase)
+    input                       ddr_twd_clk,       // 400MHz
+    input                       ddr_core_clk,      // 200MHz controller core
+
+    ////////////////////////    DDR3 memory    ////////////////////////
+    output                      ddr_reset,
+    output                      ddr_cs,
+    output                      ddr_ras,
+    output                      ddr_cas,
+    output                      ddr_we,
+    output                      ddr_cke,
+    output [15:0]               ddr_addr,
+    output [2:0]                ddr_ba,
+    output                      ddr_odt,
+    output [1:0]                o_ddr_dm_hi,
+    output [1:0]                o_ddr_dm_lo,
+    input  [1:0]                i_ddr_dqs_hi,
+    input  [1:0]                i_ddr_dqs_lo,
+    input  [1:0]                i_ddr_dqs_n_hi,
+    input  [1:0]                i_ddr_dqs_n_lo,
+    output [1:0]                o_ddr_dqs_hi,
+    output [1:0]                o_ddr_dqs_lo,
+    output [1:0]                o_ddr_dqs_oe,
+    output [1:0]                o_ddr_dqs_n_oe,
+    input  [15:0]               i_ddr_dq_hi,
+    input  [15:0]               i_ddr_dq_lo,
+    output [15:0]               o_ddr_dq_hi,
+    output [15:0]               o_ddr_dq_lo,
+    output [15:0]               o_ddr_dq_oe,
+
+    ////////////////////////    DDR3 PLL calibration   ////////////////////////
+    (* syn_peri_port = 0 *) output [2:0] pll_shift,
+    (* syn_peri_port = 0 *) output [4:0] pll_shift_sel,
+    (* syn_peri_port = 0 *) output         pll_shift_ena,
 
     ////////////////////////    UART      ////////////////////////
     input                       rxd,
@@ -17,6 +59,7 @@ module top
     ////////////////////////    HDMI TX   ////////////////////////
     input                       hdmi_tx_locked,
     input                       hdmi_tx_slow_clk,
+    input                       hdmi_tx_half_clk,
     output [9:0]                tmds_data0_o,
     output [9:0]                tmds_data1_o,
     output [9:0]                tmds_data2_o,
@@ -88,187 +131,7 @@ module top
 );
 
 //=====================================================================
-// LED
-//   board LED2 (led[0]) = rxd
-//   board LED3 (led[1]) = txd
-//   board LED4 (led[2]) = sc431hai_done   (I2C init complete)
-//   board LED5 (led[3]) = cam_frame_valid (camera streaming)
-//=====================================================================
-assign led[0] = rxd;
-assign led[1] = txd;
-assign led[2] = sc431hai_done;
-assign led[3] = cam_frame_valid;
-
-//=====================================================================
-// UART loopback (replicate 17 demo)
-//=====================================================================
-wire        RdEmpty;
-wire        tx_valid;
-wire        rx_valid;
-wire        tx_req;
-wire [7:0]  tx_data;
-wire [7:0]  rx_data;
-wire [7:0]  RdDNum;
-
-DC_FIFO #(
-    .FIFO_MODE  ("Normal"),
-    .DATA_WIDTH (8),
-    .FIFO_DEPTH (128)
-) DC_FIFO_inst (
-    .Reset      (1'b0),
-    .WrClk      (gpio_clk_27m),
-    .WrEn       (rx_valid),
-    .WrDNum     (),
-    .WrFull     (),
-    .WrData     (rx_data),
-    .RdClk      (gpio_clk_27m),
-    .RdEn       (tx_req & (~RdEmpty)),
-    .RdDNum     (RdDNum),
-    .RdEmpty    (RdEmpty),
-    .DataVal    (tx_valid),
-    .RdData     (tx_data)
-);
-
-uart_rx_tx #(
-    .CLK_RATE       (27000000),
-    .BPS_RATE       (115200),
-    .STOP_BIT_W     (1),
-    .CHECKSUM_MODE  (2'b00),
-    .CHECKSUM_EN    (1'b0)
-) uart_rx_tx_inst (
-    .clk        (gpio_clk_27m),
-    .rst_n      (1'b1),
-    .rxd        (rxd),
-    .txd        (txd),
-    .tx_valid   (tx_valid),
-    .tx_data    (tx_data),
-    .tx_req     (tx_req),
-    .rx_valid   (rx_valid),
-    .rx_data    (rx_data)
-);
-
-//=====================================================================
-// HDMI color bar TX (replicate 03 demo)
-//=====================================================================
-parameter   MAX_HRES    = 12'd1920;
-parameter   MAX_VRES    = 12'd1080;
-parameter   HSP         = 8'd44;
-parameter   HBP         = 8'd148;
-parameter   HFP         = 8'd88;
-parameter   VSP         = 8'd5;
-parameter   VBP         = 8'd36;
-parameter   VFP         = 8'd4;
-
-wire        video_hs;
-wire        video_vs;
-wire        video_de;
-wire [7:0]  video_r;
-wire [7:0]  video_g;
-wire [7:0]  video_b;
-wire        sys_rst_n;
-
-reset
-#(
-    .IN_RST_ACTIVE  ("LOW"),
-    .OUT_RST_ACTIVE ("LOW"),
-    .CYCLE          (3)
-)
-inst_rst
-(
-    .i_arst (hdmi_tx_locked),
-    .i_clk  (hdmi_tx_slow_clk),
-    .o_srst (sys_rst_n)
-);
-
-wire [9:0] tmds_data0;
-wire [9:0] tmds_data1;
-wire [9:0] tmds_data2;
-wire [9:0] tmds_clk;
-
-assign tmds_data0_TX_OE = 1'b1;
-assign tmds_data1_TX_OE = 1'b1;
-assign tmds_data2_TX_OE = 1'b1;
-assign tmds_clk_TX_OE   = 1'b1;
-
-assign tmds_data0_TX_RST = 1'b0;
-assign tmds_data1_TX_RST = 1'b0;
-assign tmds_data2_TX_RST = 1'b0;
-assign tmds_clk_TX_RST   = 1'b0;
-
-color_bar_rgb #(
-    .HS_POLORY      (1'b1),
-    .VS_POLORY      (1'b1),
-    .SYMBOL_WIDTH   (8),
-    .SYMBOL_NUM     (3),
-    .PAR_PIXEL_NUM  (1),
-    .HFP            (HFP),
-    .HST            (HSP),
-    .HACT           (MAX_HRES),
-    .HBP            (HBP),
-    .VFP            (VFP),
-    .VST            (VSP),
-    .VACT           (MAX_VRES),
-    .VBP            (VBP),
-    .TEST_MODE      (2'd2)
-) u_color_bar_rgb (
-    .clk        (hdmi_tx_slow_clk),
-    .rst_n      (sys_rst_n),
-    .hs         (video_hs),
-    .vs         (video_vs),
-    .de         (video_de),
-    .o_vid_data ({video_r, video_g, video_b})
-);
-
-// camera video (from MIPI -> frame_buf -> display_ctrl), declared below
-wire        cam_hs;
-wire        cam_vs;
-wire        cam_de;
-wire [7:0]  cam_r;
-wire [7:0]  cam_g;
-wire [7:0]  cam_b;
-wire        cam_frame_valid;
-
-// 0 : color bar, 1 : camera (as soon as the first camera frame is captured)
-// synchronize the select flag into the HDMI pixel clock domain
-reg  [1:0]  vsel_sync;
-always @(posedge hdmi_tx_slow_clk or negedge sys_rst_n)
-begin
-    if (~sys_rst_n)
-        vsel_sync <= 2'b00;
-    else
-        vsel_sync <= {vsel_sync[0], cam_frame_valid};
-end
-wire        video_sel = vsel_sync[1];
-wire [7:0]  enc_r = video_sel ? cam_r : video_r;
-wire [7:0]  enc_g = video_sel ? cam_g : video_g;
-wire [7:0]  enc_b = video_sel ? cam_b : video_b;
-wire        enc_hs = video_sel ? cam_hs : video_hs;
-wire        enc_vs = video_sel ? cam_vs : video_vs;
-wire        enc_de = video_sel ? cam_de : video_de;
-
-dvi_encoder dvi_encoder_m0
-(
-    .pixelclk   (hdmi_tx_slow_clk),
-    .rstin      (~sys_rst_n),
-    .blue_din   (enc_b),
-    .green_din  (enc_g),
-    .red_din    (enc_r),
-    .hsync      (enc_hs),
-    .vsync      (enc_vs),
-    .de         (enc_de),
-    .tmds_data0 (tmds_data0),
-    .tmds_data1 (tmds_data1),
-    .tmds_data2 (tmds_data2),
-    .tmds_clk   (tmds_clk)
-);
-
-assign tmds_clk_o   = ~tmds_clk;
-assign tmds_data0_o = ~tmds_data0;
-assign tmds_data1_o = ~tmds_data1;
-assign tmds_data2_o = ~tmds_data2;
-
-//=====================================================================
-// MIPI CSI-2 RX (J4)
+// MIPI CSI-2 RX (J4) + sensor frame clip
 //=====================================================================
 wire        mipi_data_valid;
 wire [63:0] mipi_pixel_data;
@@ -278,6 +141,12 @@ wire [15:0] mipi_word_count;
 wire        mipi_hsync;
 wire        mipi_vsync;
 wire        mipi_irq;
+
+wire        ddr_cal_done;
+wire        ddr_cal_pass;
+wire [7:0]  ddr_cal_fail_log;
+
+wire        video_rst_n = mipi_pll_locked & core_pll_locked & ddr_pll_locked & hdmi_tx_locked;
 
 mipi_rx u_mipi_rx
 (
@@ -337,106 +206,349 @@ mipi_rx u_mipi_rx
     .irq                    (mipi_irq)
 );
 
-//=====================================================================
-// Camera live view: RAW10 -> decimated gray -> frame_buf -> 1080p display
-//=====================================================================
-wire        cam_wr_en;
-wire [15:0] cam_wr_addr;
-wire [7:0]  cam_wr_data;
-wire        cam_wr_bank;
-wire        cam_vsync_seen;
-wire        cam_data_seen;
-
-cam_capture #(
-    .IMG_W       (240),
-    .IMG_H       (135),
-    .DECIM_LOG2  (3),
-    .PIX_PER_CLK (4)
-) u_cam_capture (
-    .clk              (mipi_pixel_clk),
-    .rst_n            (mipi_pll_locked),
-    .pixel_data       (mipi_pixel_data),
-    .pixel_data_valid (mipi_data_valid),
-    .hsync            (mipi_hsync),
-    .vsync            (mipi_vsync),
-    .wr_en            (cam_wr_en),
-    .wr_addr          (cam_wr_addr),
-    .wr_data          (cam_wr_data),
-    .wr_bank          (cam_wr_bank),
-    .frame_valid      (cam_frame_valid),
-    .vsync_seen       (cam_vsync_seen),
-    .data_seen        (cam_data_seen)
+wire [39:0] clip_hs, clip_vs, clip_de, clip_dat;
+sensor_clipper u_sensor_clipper (
+    .clk    (mipi_pixel_clk),
+    .i_hs   (mipi_hsync),
+    .i_vs   (mipi_vsync),
+    .i_de   (mipi_data_valid),
+    .i_dat  (mipi_pixel_data[39:0]),
+    .o_hs   (clip_hs),
+    .o_vs   (clip_vs),
+    .o_de   (clip_de),
+    .o_dat  (clip_dat)
 );
 
-// sync camera write-bank into the display clock domain and read the
-// completed (not currently written) bank
-reg [1:0] cam_wb_sync;
-reg       cam_rd_bank;
-wire      cam_frame_pulse;
+// 4 RAW10 pixels -> 4 x 8-bit Bayer mosaic (packed 32-bit)
+wire [31:0] fb_vin = {clip_dat[39:32], clip_dat[29:22],
+                      clip_dat[19:12], clip_dat[9:2]};
+wire        fb_ide = clip_de & clip_hs;
+wire        fb_ihs = clip_hs;
+wire        fb_ivs = clip_vs;
 
-always @(posedge hdmi_tx_slow_clk or negedge sys_rst_n)
-begin
-    if (~sys_rst_n) begin
-        cam_wb_sync <= 2'b00;
-        cam_rd_bank <= 1'b0;
+//=====================================================================
+// DDR3 streaming frame buffer (Bayer mosaic), read side at 74.25MHz
+//=====================================================================
+// shared address channel: AXI bridge -> DDR3 soft controller
+wire [7:0]  ddr_ax_aid;
+wire [27:0] ddr_ax_aaddr;
+wire [7:0]  ddr_ax_alen;
+wire [2:0]  ddr_ax_asize;
+wire [1:0]  ddr_ax_aburst;
+wire [1:0]  ddr_ax_alock;
+wire        ddr_ax_atype;
+wire        ddr_ax_avalid;
+wire        ddr_ax_aready;
+wire [7:0]  ddr_ax_bid8;
+wire [7:0]  ddr_ax_rid8;
+
+wire [5:0]   fb_awid;
+wire [27:0]  fb_awaddr;
+wire [7:0]   fb_awlen;
+wire [2:0]   fb_awsize;
+wire [1:0]   fb_awburst;
+wire [3:0]   fb_awcache;
+wire [2:0]   fb_awprot;
+wire         fb_awlock;
+wire         fb_awvalid;
+wire         fb_awready;
+
+wire [5:0]   fb_arid;
+wire [27:0]  fb_araddr;
+wire [7:0]   fb_arlen;
+wire [2:0]   fb_arsize;
+wire [1:0]   fb_arburst;
+wire         fb_arlock;
+wire         fb_arvalid;
+wire         fb_arready;
+
+wire [127:0] fb_wdata;
+wire [15:0]  fb_wstrb;
+wire         fb_wlast;
+wire         fb_wvalid;
+wire         fb_wready;
+
+wire [7:0]   fb_rid8;
+wire [127:0] fb_rdata;
+wire         fb_rlast;
+wire         fb_rvalid;
+wire         fb_rready;
+wire [1:0]   fb_rresp;
+wire [5:0]   fb_rid;
+wire [7:0]   fb_bid8;
+wire [5:0]   fb_bid;
+wire         fb_bvalid;
+wire         fb_bready;
+wire [1:0]   fb_bresp;
+
+wire [15:0]  fb_vout;
+wire         fb_hs, fb_vs, fb_de;
+
+frame_buffer #(
+    .I_VID_WIDTH    (32),
+    .O_VID_WIDTH    (16),
+    .AXI_DATA_WIDTH (128),
+    .AXI_ADDR_WIDTH (28),
+    .WR_FIFO_DEPTH  (1024),
+    .RD_FIFO_DEPTH  (1024),
+    .START_ADDR     (28'h0000000),
+    .BURST_LEN      (8'd127),
+    .FB_NUM         (3),
+    .MAX_VID_WIDTH  (1920),
+    .MAX_VID_HIGHT  (1080)
+) u_frame_buffer (
+    .axi_clk        (core_clk),
+    .rst_n          (video_rst_n),
+
+    .i_clk          (mipi_pixel_clk),
+    .i_vs           (fb_ivs),
+    .i_hs           (fb_ihs),
+    .i_de           (fb_ide),
+    .vin            (fb_vin),
+
+    .o_clk          (hdmi_tx_half_clk),
+    .o_hs           (fb_hs),
+    .o_vs           (fb_vs),
+    .o_de           (fb_de),
+    .vout           (fb_vout),
+
+    .H_FRONT_PORCH  (13'd44),
+    .H_SYNC         (13'd22),
+    .H_VALID        (13'd960),
+    .H_BACK_PORCH   (13'd74),
+    .V_FRONT_PORCH  (13'd20),
+    .V_SYNC         (13'd5),
+    .V_VALID        (13'd1080),
+    .V_BACK_PORCH   (13'd20),
+
+    .awid           (fb_awid),
+    .awaddr         (fb_awaddr),
+    .awlen          (fb_awlen),
+    .awsize         (fb_awsize),
+    .awburst        (fb_awburst),
+    .awcache        (fb_awcache),
+    .awprot         (fb_awprot),
+    .awlock         (fb_awlock),
+    .awvalid        (fb_awvalid),
+    .awcobuf        (),
+    .awapcmd        (),
+    .awallstrb      (),
+    .awqos          (),
+    .awready        (fb_awready),
+
+    .arid           (fb_arid),
+    .araddr         (fb_araddr),
+    .arlen          (fb_arlen),
+    .arsize         (fb_arsize),
+    .arburst        (fb_arburst),
+    .arlock         (fb_arlock),
+    .arvalid        (fb_arvalid),
+    .arapcmd        (),
+    .arqos          (),
+    .arready        (fb_arready),
+
+    .wdata          (fb_wdata),
+    .wstrb          (fb_wstrb),
+    .wlast          (fb_wlast),
+    .wvalid         (fb_wvalid),
+    .wready         (fb_wready),
+
+    .rid            (fb_rid),
+    .rdata          (fb_rdata),
+    .rlast          (fb_rlast),
+    .rvalid         (fb_rvalid),
+    .rready         (fb_rready),
+    .rresp          (fb_rresp),
+
+    .bid            (fb_bid),
+    .bvalid         (fb_bvalid),
+    .bready         (fb_bready),
+
+    .test_rd_fifo_rddata (),
+    .test_wdata          (),
+    .test_rdata          (),
+    .test_BURST_LEN      ()
+);
+
+assign fb_rid = fb_rid8[5:0];
+assign fb_bid = fb_bid8[5:0];
+
+//=====================================================================
+// Display: debayer (74.25MHz, RGGB) then 2 -> 1 expansion to 148.5MHz
+//=====================================================================
+wire        dbg_vs_o, dbg_hs_o, dbg_de_o, dbg_val_o;
+wire [47:0] dbg_rgb;
+
+debayer_top_2to1 u_debayer (
+    .in_pclk     (hdmi_tx_half_clk),
+    .in_rstn     (video_rst_n),
+    .raw_vs_i    (fb_vs),
+    .raw_hs_i    (fb_hs),
+    .raw_de_i    (fb_de),
+    .raw_valid_i (fb_de),
+    .raw_datax4_i({fb_vout[7:0], fb_vout[15:8]}),
+    .rgb_vs_o    (dbg_vs_o),
+    .rgb_hs_o    (dbg_hs_o),
+    .rgb_de_o    (dbg_de_o),
+    .rgb_valid_o (dbg_val_o),
+    .rgb_datax2_o(dbg_rgb)
+);
+
+// phase-insensitive 2->1 expansion: async FIFO 74.25MHz -> 148.5MHz
+wire [50:0] af_din = {dbg_hs_o, dbg_vs_o, dbg_de_o, dbg_rgb};
+wire [50:0] af_dout;
+wire        af_wfull, af_rempty;
+reg         af_rinc;
+
+afifo_simple #(.DW(51), .AW(3)) u_exp_fifo (
+    .wclk   (hdmi_tx_half_clk),
+    .wrst_n (video_rst_n),
+    .winc   (1'b1),
+    .din    (af_din),
+    .wfull  (af_wfull),
+    .rclk   (hdmi_tx_slow_clk),
+    .rrst_n (video_rst_n),
+    .rinc   (af_rinc),
+    .dout   (af_dout),
+    .rempty (af_rempty)
+);
+
+reg        rphase, rrun;
+reg [50:0] cur;
+
+always @(posedge hdmi_tx_slow_clk or negedge video_rst_n) begin
+    if (!video_rst_n) begin
+        rphase  <= 1'b0;
+        rrun    <= 1'b0;
+        af_rinc <= 1'b0;
+        cur     <= 51'd0;
     end else begin
-        cam_wb_sync <= {cam_wb_sync[0], cam_wr_bank};
-        if (cam_frame_pulse)
-            cam_rd_bank <= ~cam_wb_sync[1];
+        if (!rrun) begin
+            af_rinc <= 1'b0;
+            if (!af_rempty)
+                rrun <= 1'b1;
+        end else begin
+            rphase  <= ~rphase;
+            af_rinc <= ~rphase;
+            if (rphase)
+                cur <= af_dout;
+        end
     end
 end
 
-wire [15:0] cam_rd_addr;
-wire [7:0]  cam_rd_data;
+wire [50:0] ew = rphase ? af_dout : cur;
+wire [23:0] p_first  = ew[47:24];
+wire [23:0] p_second = ew[23:0];
+wire [23:0] exp_px   = rphase ? p_first : p_second;
 
-frame_buf #(
-    .IMG_W      (240),
-    .IMG_H      (135),
-    .ADDR_WIDTH (16),
-    .BANK_SHIFT (15)
-) u_frame_buf (
-    .wr_clk  (mipi_pixel_clk),
-    .wr_en   (cam_wr_en),
-    .wr_addr (cam_wr_addr),
-    .wr_data (cam_wr_data),
-    .wr_bank (cam_wr_bank),
-    .rd_clk  (hdmi_tx_slow_clk),
-    .rd_addr (cam_rd_addr),
-    .rd_bank (cam_rd_bank),
-    .rd_data (cam_rd_data)
+reg [23:0] px_r;
+reg        hs_r, vs_r, de_r;
+always @(posedge hdmi_tx_slow_clk or negedge video_rst_n) begin
+    if (!video_rst_n) begin
+        px_r <= 24'd0;
+        hs_r <= 1'b0;
+        vs_r <= 1'b0;
+        de_r <= 1'b0;
+    end else begin
+        px_r <= exp_px;
+        hs_r <= ew[50];
+        vs_r <= ew[49];
+        de_r <= ew[48];
+    end
+end
+
+//=====================================================================
+// HDMI TX (our TMDS encoder)
+//=====================================================================
+localparam SWAP_RB   = 1'b0;    // 1: blue<-red, red<-blue
+localparam SWAP_HSVS = 1'b0;    // 1: hsync<-vs, vsync<-hs
+
+wire [9:0] tmds_data0;
+wire [9:0] tmds_data1;
+wire [9:0] tmds_data2;
+wire [9:0] tmds_clk;
+
+assign tmds_data0_TX_OE = 1'b1;
+assign tmds_data1_TX_OE = 1'b1;
+assign tmds_data2_TX_OE = 1'b1;
+assign tmds_clk_TX_OE   = 1'b1;
+
+assign tmds_data0_TX_RST = 1'b0;
+assign tmds_data1_TX_RST = 1'b0;
+assign tmds_data2_TX_RST = 1'b0;
+assign tmds_clk_TX_RST   = 1'b0;
+
+dvi_encoder dvi_encoder_m0
+(
+    .pixelclk   (hdmi_tx_slow_clk),
+    .rstin      (~video_rst_n),
+    .blue_din   (SWAP_RB   ? px_r[23:16] : px_r[7:0]),
+    .green_din  (px_r[15:8]),
+    .red_din    (SWAP_RB   ? px_r[7:0]   : px_r[23:16]),
+    .hsync      (SWAP_HSVS ? vs_r : hs_r),
+    .vsync      (SWAP_HSVS ? hs_r : vs_r),
+    .de         (de_r),
+    .tmds_data0 (tmds_data0),
+    .tmds_data1 (tmds_data1),
+    .tmds_data2 (tmds_data2),
+    .tmds_clk   (tmds_clk)
 );
 
-display_ctrl #(
-    .H_ACT  (1920),
-    .H_FP   (88),
-    .H_SYNC (44),
-    .H_BP   (148),
-    .V_ACT  (1080),
-    .V_FP   (4),
-    .V_SYNC (5),
-    .V_BP   (36),
-    .IMG_W  (240),
-    .IMG_H  (135),
-    .HS_POL (1'b1),
-    .VS_POL (1'b1)
-) u_display_ctrl (
-    .pixel_clk   (hdmi_tx_slow_clk),
-    .rst_n       (sys_rst_n),
-    .rd_addr     (cam_rd_addr),
-    .rd_data     (cam_rd_data),
-    .video_r     (cam_r),
-    .video_g     (cam_g),
-    .video_b     (cam_b),
-    .hs          (cam_hs),
-    .vs          (cam_vs),
-    .de          (cam_de),
-    .frame_pulse (cam_frame_pulse)
+assign tmds_clk_o   = ~tmds_clk;
+assign tmds_data0_o = ~tmds_data0;
+assign tmds_data1_o = ~tmds_data1;
+assign tmds_data2_o = ~tmds_data2;
+
+//=====================================================================
+// UART loopback
+//=====================================================================
+wire        RdEmpty;
+wire        tx_valid;
+wire        rx_valid;
+wire        tx_req;
+wire [7:0]  tx_data;
+wire [7:0]  rx_data;
+wire [7:0]  RdDNum;
+
+DC_FIFO #(
+    .FIFO_MODE  ("Normal"),
+    .DATA_WIDTH (8),
+    .FIFO_DEPTH (128)
+) DC_FIFO_inst (
+    .Reset      (1'b0),
+    .WrClk      (gpio_clk_27m),
+    .WrEn       (rx_valid),
+    .WrDNum     (),
+    .WrFull     (),
+    .WrData     (rx_data),
+    .RdClk      (gpio_clk_27m),
+    .RdEn       (tx_req & (~RdEmpty)),
+    .RdDNum     (RdDNum),
+    .RdEmpty    (RdEmpty),
+    .DataVal    (tx_valid),
+    .RdData     (tx_data)
+);
+
+uart_rx_tx #(
+    .CLK_RATE       (27000000),
+    .BPS_RATE       (115200),
+    .STOP_BIT_W     (1),
+    .CHECKSUM_MODE  (2'b00),
+    .CHECKSUM_EN    (1'b0)
+) uart_rx_tx_inst (
+    .clk        (gpio_clk_27m),
+    .rst_n      (1'b1),
+    .rxd        (rxd),
+    .txd        (txd),
+    .tx_valid   (tx_valid),
+    .tx_data    (tx_data),
+    .tx_req     (tx_req),
+    .rx_valid   (rx_valid),
+    .rx_data    (rx_data)
 );
 
 //=====================================================================
-// SC431HAI I2C bring-up (power-up reset + register init)
-//   CPU port left unconnected for now; when the RISC-V SoC is added,
-//   drive cpu_mode/cpu_addr/cpu_wdata/cpu_we/cpu_stb from APB/AXI4-Lite.
+// SC431HAI I2C bring-up
 //=====================================================================
 wire sc431hai_done;
 wire sensor_id_ok;
@@ -467,5 +579,154 @@ sc431hai_init u_sc431hai_init
 
 assign io_cam_scl_OE = ~cam_scl_padoen;
 assign io_cam_sda_OE = ~cam_sda_padoen;
+
+//=====================================================================
+// AXI4 -> shared-address bridge (frame buffer -> DDR3 soft controller)
+//=====================================================================
+axi_atype_bridge #(
+    .IDW (4),
+    .AW  (28)
+) u_axi_atype_bridge (
+    .clk         (core_clk),
+    .rst_n       (core_pll_locked & ddr_pll_locked),
+
+    .s_awid      (fb_awid[3:0]),
+    .s_awaddr    (fb_awaddr),
+    .s_awlen     (fb_awlen),
+    .s_awsize    (fb_awsize),
+    .s_awburst   (fb_awburst),
+    .s_awlock    (fb_awlock),
+    .s_awvalid   (fb_awvalid),
+    .s_awready   (fb_awready),
+
+    .s_arid      (fb_arid[3:0]),
+    .s_araddr    (fb_araddr),
+    .s_arlen     (fb_arlen),
+    .s_arsize    (fb_arsize),
+    .s_arburst   (fb_arburst),
+    .s_arlock    (fb_arlock),
+    .s_arvalid   (fb_arvalid),
+    .s_arready   (fb_arready),
+
+    .m_aid       (ddr_ax_aid),
+    .m_aaddr     (ddr_ax_aaddr),
+    .m_alen      (ddr_ax_alen),
+    .m_asize     (ddr_ax_asize),
+    .m_aburst    (ddr_ax_aburst),
+    .m_alock     (ddr_ax_alock),
+    .m_atype     (ddr_ax_atype),
+    .m_avalid    (ddr_ax_avalid),
+    .m_aready    (ddr_ax_aready),
+
+    .bvalid      (fb_bvalid),
+    .bready      (fb_bready),
+    .rvalid      (fb_rvalid),
+    .rlast       (fb_rlast),
+    .rready      (fb_rready)
+);
+
+//=====================================================================
+// Efinix DDR3 soft controller (AXI variant, 16-bit DDR3, 128-bit AXI)
+//=====================================================================
+efx_ddr3_axi u_efx_ddr3_axi (
+    .clk              (core_clk),
+    .core_clk         (ddr_core_clk),
+    .tdqss_clk        (ddr_tdqss_clk),
+    .tac_clk          (ddr_tac_clk),
+    .twd_clk          (ddr_twd_clk),
+    .reset_n          (core_pll_locked & ddr_pll_locked),
+
+    .reset            (ddr_reset),
+    .cs               (ddr_cs),
+    .ras              (ddr_ras),
+    .cas              (ddr_cas),
+    .we               (ddr_we),
+    .cke              (ddr_cke),
+    .addr             (ddr_addr),
+    .ba               (ddr_ba),
+    .odt              (ddr_odt),
+
+    .o_dm_hi          (o_ddr_dm_hi),
+    .o_dm_lo          (o_ddr_dm_lo),
+
+    .i_dq_hi          (i_ddr_dq_hi),
+    .i_dq_lo          (i_ddr_dq_lo),
+    .o_dq_hi          (o_ddr_dq_hi),
+    .o_dq_lo          (o_ddr_dq_lo),
+    .o_dq_oe          (o_ddr_dq_oe),
+
+    .i_dqs_hi         (i_ddr_dqs_hi),
+    .i_dqs_lo         (i_ddr_dqs_lo),
+    .i_dqs_n_hi       (i_ddr_dqs_n_hi),
+    .i_dqs_n_lo       (i_ddr_dqs_n_lo),
+    .o_dqs_hi         (o_ddr_dqs_hi),
+    .o_dqs_lo         (o_ddr_dqs_lo),
+    .o_dqs_n_hi       (),
+    .o_dqs_n_lo       (),
+    .o_dqs_oe         (o_ddr_dqs_oe),
+    .o_dqs_n_oe       (o_ddr_dqs_n_oe),
+
+    .axi_aid          (ddr_ax_aid),
+    .axi_aaddr        ({4'b0, ddr_ax_aaddr}),
+    .axi_alen         (ddr_ax_alen),
+    .axi_asize        (ddr_ax_asize),
+    .axi_aburst       (ddr_ax_aburst),
+    .axi_alock        (ddr_ax_alock),
+    .axi_avalid       (ddr_ax_avalid),
+    .axi_aready       (ddr_ax_aready),
+    .axi_atype        (ddr_ax_atype),
+
+    .axi_wid          ({2'b0, fb_awid}),
+    .axi_wdata        (fb_wdata),
+    .axi_wstrb        (fb_wstrb),
+    .axi_wlast        (fb_wlast),
+    .axi_wvalid       (fb_wvalid),
+    .axi_wready       (fb_wready),
+
+    .axi_rid          (fb_rid8),
+    .axi_rdata        (fb_rdata),
+    .axi_rlast        (fb_rlast),
+    .axi_rvalid       (fb_rvalid),
+    .axi_rready       (fb_rready),
+    .axi_rresp        (fb_rresp),
+
+    .axi_bid          (fb_bid8),
+    .axi_bresp        (fb_bresp),
+    .axi_bvalid       (fb_bvalid),
+    .axi_bready       (fb_bready),
+
+    .shift            (pll_shift),
+    .shift_sel        (pll_shift_sel),
+    .shift_ena        (pll_shift_ena),
+    .cal_ena          (1'b1),
+    .cal_done         (ddr_cal_done),
+    .cal_pass         (ddr_cal_pass),
+    .cal_shift_val    (),
+    .cal_fail_log     (ddr_cal_fail_log)
+);
+
+//=====================================================================
+// TEMPORARY probes: display-side activity
+//   led0=dbg_de_o (debayer de), led1=fb_de (frame buf read de),
+//   led2=hdmi_tx_locked, led3=dbg_hs_o (debayer hs)
+//=====================================================================
+reg [23:0] dbg_de_cnt, fb_de_cnt, dbg_hs_cnt;
+
+always @(posedge core_clk or negedge video_rst_n) begin
+    if (!video_rst_n) begin
+        dbg_de_cnt <= 24'd0;
+        fb_de_cnt  <= 24'd0;
+        dbg_hs_cnt <= 24'd0;
+    end else begin
+        if (dbg_de_o) dbg_de_cnt <= dbg_de_cnt + 1'b1;
+        if (fb_de)    fb_de_cnt  <= fb_de_cnt  + 1'b1;
+        if (dbg_hs_o) dbg_hs_cnt <= dbg_hs_cnt + 1'b1;
+    end
+end
+
+assign led[0] = dbg_de_cnt[10];
+assign led[1] = fb_de_cnt[10];
+assign led[2] = hdmi_tx_locked;
+assign led[3] = dbg_hs_cnt[10];
 
 endmodule

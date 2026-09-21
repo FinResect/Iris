@@ -5,16 +5,30 @@
 - 工具链：Efinity `2026.1.132.4.5`
 - 板卡：Ti60F225_DemoBoard_v4
 
+## 已实现
+
+- **L0**：HDMI 1080p60 彩条、UART 回环、LED。
+- **摄像头接入**：SC431HAI（J4/MIPI CSI-2）→ 灰度实时画面到 HDMI（240×135 放大 8×），
+  I²C 初始化 + sensor ID 校验。详见
+  [`docs/摄像头接入_MIPI_CSI2_纪要.md`](docs/摄像头接入_MIPI_CSI2_纪要.md)。
+
+> ⚠️ 关键：CSI RX IP 必须用 `efx_csi2_rx` **5.9**（`ip/csi_rx_59/`），新版（如 5.17）解析不出 `vs`，画面会变成雪花。
+
 ## 目录结构
 
 ```
 Iris/
 ├── iris_ws/          # Efinity 工程（top=top）
 │   ├── iris_ws.xml        # 工程文件（源码清单 / peri / sdc 引用）
-│   ├── iris_ws.peri.xml   # Interface Designer（引脚/电压/PLL/LVDS）
-│   └── src/               # RTL 源码（top + hdmi + uart）
+│   ├── iris_ws.peri.xml   # Interface Designer（引脚/电压/PLL/LVDS/MIPI）
+│   ├── ip/csi_rx_59/      # efx_csi2_rx 5.9 生成物
+│   └── src/               # RTL 源码
+│       ├── hdmi/ uart/    # L0：彩条/DVI 编码、UART
+│       ├── mipi/          # MIPI CSI-2 + SC431HAI 器件相关
+│       ├── i2c/           # 通用 I²C（可复用）
+│       └── video/         # 帧缓存 / 显示控制器（可复用）
 ├── .script/          # 构建/烧录脚本
-├── docs/             # 方案、板卡手册、编译烧录要点等
+├── docs/             # 方案、板卡手册、纪要等
 └── Ti60F225_DemoBoard_v4/   # 官方 Demo、驱动、原理图（gitignore）
 ```
 

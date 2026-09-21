@@ -58,8 +58,6 @@ begin
 
         if (vsync & ~vs_d) begin
             x_idx      <= 12'd0;
-            line_idx   <= 12'd0;
-            wr_bank    <= ~wr_bank;
             vsync_seen <= 1'b1;
         end else begin
             if (hsync & ~hs_d)
@@ -77,9 +75,13 @@ begin
             end
 
             if (~hsync & hs_d) begin
-                line_idx <= line_idx + 1'b1;
-                if (line_idx[11:DECIM_LOG2] == (IMG_H-1))
+                if (line_idx == ((IMG_H << DECIM_LOG2) - 1'b1)) begin
+                    line_idx    <= 12'd0;
+                    wr_bank     <= ~wr_bank;   // full hsync frame: vsync-independent
                     frame_valid <= 1'b1;
+                end else begin
+                    line_idx <= line_idx + 1'b1;
+                end
             end
         end
     end

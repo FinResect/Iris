@@ -8,18 +8,22 @@
         <efx:top_module name="top" />
         <efx:design_file name="src/top.v" version="default" library="default" />
         <efx:design_file name="src/hdmi/color_bar_rgb.v" version="default" library="default" />
+        <efx:design_file name="src/hdmi/reset.v" version="default" library="default" />
         <efx:design_file name="src/hdmi/dvi_encoder.v" version="default" library="default" />
         <efx:design_file name="src/hdmi/encode.v" version="default" library="default" />
-        <efx:design_file name="src/hdmi/reset.v" version="default" library="default" />
         <efx:design_file name="src/uart/uart_rx.v" version="default" library="default" />
         <efx:design_file name="src/uart/uart_tx.v" version="default" library="default" />
         <efx:design_file name="src/uart/uart_rx_tx.v" version="default" library="default" />
         <efx:design_file name="src/uart/DC_FIFO_v3p7.v" version="default" library="default" />
         <efx:design_file name="src/mipi/mipi_rx.v" version="default" library="default" />
-        <efx:design_file name="src/mipi/cam_capture.v" version="default" library="default" />
+        <efx:design_file name="src/mipi/sensor_clipper.v" version="default" library="default" />
         <efx:design_file name="src/video/true_dual_port_ram.v" version="default" library="default" />
+        <efx:design_file name="src/video/afifo_simple.v" version="default" library="default" />
         <efx:design_file name="src/video/frame_buf.v" version="default" library="default" />
-        <efx:design_file name="src/video/display_ctrl.v" version="default" library="default" />
+        <efx:design_file name="src/video/debayer/debayer_top_2to1.v" version="default" library="default" />
+        <efx:design_file name="src/video/debayer/line_buffer.v" version="default" library="default" />
+        <efx:design_file name="src/video/debayer/raw_to_rgb.v" version="default" library="default" />
+        <efx:design_file name="src/video/debayer/rgb_gain.v" version="default" library="default" />
         <efx:design_file name="src/mipi/sc431hai_i2c_rom.v" version="default" library="default" />
         <efx:design_file name="src/mipi/sc431hai_init.v" version="default" library="default" />
         <efx:design_file name="src/i2c/timescale.v" version="default" library="default" />
@@ -31,6 +35,23 @@
         <efx:design_file name="src/i2c/i2c_8addr_8data.v" version="default" library="default" />
         <efx:design_file name="src/i2c/i2c_master_reg_set.v" version="default" library="default" />
         <efx:design_file name="src/i2c/i2c_subsystem.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/efx_ddr3/efx_ddr3_axi.sv" version="default" library="default" />
+        <efx:design_file name="src/ddr/axi_atype_bridge.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/ddr3_gray_frame_buffer.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/frame_buffer.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/ddr_buffer.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/ddr_wr_buffer.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/ddr_rd_buffer.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/bank_switch.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/vid_rx_align_v1.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/ser2par_16_128_v1.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/ser2par_32_128_v1.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/par2ser_parse.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/par2ser_128_16_v1.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/par2ser_128_32_v1.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/data_tx.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/frame_info_det.v" version="default" library="default" />
+        <efx:design_file name="src/ddr/fb/rst_n_piple.v" version="default" library="default" />
         <efx:top_vhdl_arch name="" />
         <efx:msg_config name="" />
         <efx:partition_definitions name="" />
@@ -45,7 +66,10 @@
         <efx:inter_file name="" />
     </efx:constraint_info>
     <efx:sim_info />
-    <efx:misc_info />
+    <efx:misc_info>
+        <efx:misc_file name="src/ddr/efx_ddr3/ddr3_controller.bin" />
+        <efx:misc_file name="src/ddr/efx_ddr3/ddr3_controller.vh" />
+    </efx:misc_info>
     <efx:ooc_info />
     <efx:ip_info>
         <efx:ip instance_name="csi_rx_controller" path="ip/csi_rx_59/settings.json" ooc="false">
@@ -56,7 +80,9 @@
         <efx:param name="work_dir" value="work_syn" value_type="e_string" />
         <efx:param name="write_efx_verilog" value="on" value_type="e_bool" />
         <efx:param name="include" value="ip/csi_rx_59" value_type="e_string" />
-        <efx:param name="include" value="src/i2c" value_type="e_string" />
+            <efx:param name="include" value="src/i2c" value_type="e_string" />
+            <efx:param name="include" value="src/ddr" value_type="e_string" />
+            <efx:param name="include" value="src/ddr/efx_ddr3" value_type="e_string" />
         <efx:param name="allow-const-ram-index" value="0" value_type="e_option" />
         <efx:param name="blackbox-error" value="1" value_type="e_option" />
         <efx:param name="blast_const_operand_adders" value="1" value_type="e_option" />
