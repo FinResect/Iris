@@ -460,7 +460,7 @@ end
 //=====================================================================
 // HDMI TX (our TMDS encoder)
 //=====================================================================
-localparam SWAP_RB   = 1'b0;    // 1: blue<-red, red<-blue
+localparam SWAP_RB   = 1'b1;    // 1: blue<-red, red<-blue
 localparam SWAP_HSVS = 1'b0;    // 1: hsync<-vs, vsync<-hs
 
 wire [9:0] tmds_data0;
