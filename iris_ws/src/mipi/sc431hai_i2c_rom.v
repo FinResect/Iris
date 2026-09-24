@@ -1,10 +1,13 @@
 //=====================================================================
 // SC431HAI MIPI camera initialisation table (device specific)
-//   163 entries of {reg_addr[15:0], data[7:0], rw} @ 0x00..0xA2
-//   1920x1080 RAW10, 4-lane, stream on (0x0100=0x01)
-//   VTS=1150 (~39 fps target), exposure 512 half-lines.
-//   Array window / output crop kept at the vendor defaults (0x3200-0x3207
-//   semantics undocumented; changing them broke the output width).
+//   165 entries of {reg_addr[15:0], data[7:0], rw} @ 0x00..0xA4
+//   1280x720 RAW10, 4-lane, stream on (0x0100=0x01)
+//   0x3200-0x3207 kept at vendor defaults -- any change to them kills the
+//   DE pixel output (write path goes to 0).  Output window 1280x720 at crop
+//   (644,185) inside the default 2568x1090 region.
+//   VTS=1150 (39 fps at default HTS).  HTS=1800 (0x320C/0x320D, UNDOCUMENTED
+//   blind-scan) shortens the line to reach ~60 fps.  Revert HTS if the image
+//   breaks.  Exposure 512 half-lines.
 //   Consumed by i2c_subsystem (src/i2c).
 //   Implemented as a registered case-ROM (no BRAM init dependency).
 //=====================================================================
@@ -175,16 +178,18 @@ begin
         8'h96: rdata_out <= {16'h3205,8'h07,1'b0};
         8'h97: rdata_out <= {16'h3206,8'h04,1'b0};
         8'h98: rdata_out <= {16'h3207,8'hf4,1'b0};
-        8'h99: rdata_out <= {16'h3208,8'h07,1'b0};
-        8'h9a: rdata_out <= {16'h3209,8'h80,1'b0};
-        8'h9b: rdata_out <= {16'h320a,8'h04,1'b0};
-        8'h9c: rdata_out <= {16'h320b,8'h38,1'b0};
-        8'h9d: rdata_out <= {16'h3210,8'h01,1'b0};
-        8'h9e: rdata_out <= {16'h3211,8'h44,1'b0};
+        8'h99: rdata_out <= {16'h3208,8'h05,1'b0};
+        8'h9a: rdata_out <= {16'h3209,8'h00,1'b0};
+        8'h9b: rdata_out <= {16'h320a,8'h02,1'b0};
+        8'h9c: rdata_out <= {16'h320b,8'hd0,1'b0};
+        8'h9d: rdata_out <= {16'h3210,8'h02,1'b0};
+        8'h9e: rdata_out <= {16'h3211,8'h84,1'b0};
         8'h9f: rdata_out <= {16'h3212,8'h00,1'b0};
-        8'ha0: rdata_out <= {16'h3213,8'h05,1'b0};
+        8'ha0: rdata_out <= {16'h3213,8'hb9,1'b0};
         8'ha1: rdata_out <= {16'h320e,8'h04,1'b0};
         8'ha2: rdata_out <= {16'h320f,8'h7e,1'b0};
+        8'ha3: rdata_out <= {16'h320c,8'h07,1'b0};
+        8'ha4: rdata_out <= {16'h320d,8'h08,1'b0};
         default: rdata_out <= {ROM_SIZE{1'b0}};
     endcase
 end

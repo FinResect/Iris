@@ -49,7 +49,7 @@ begin
 end
 
 
-assign vs_en = vs_cnt >= 1 && vs_cnt <= 1080;
+assign vs_en = vs_cnt >= 1 && vs_cnt <= 720;
 always @( posedge clk )
 begin
     o_dat <= i_dat[39:0];

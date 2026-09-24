@@ -220,7 +220,7 @@ ddr_rd_buffer # (
 //   demo's wr_sw/rd_sw alternation, which mis-aligns when the read rate (60 fps)
 //   differs from the write rate (30 fps).
 //=====================================================================================
-localparam [31:0] BANK_STRIDE = 32'h001FC000;   // 1920*1080*1 + 4 KB guard
+localparam [31:0] BANK_STRIDE = 32'h000E2000;   // 1280*720*1 + 4 KB guard
 
 function [AXI_ADDR_WIDTH-1:0] bank_addr;
     input [1:0] b;
@@ -245,7 +245,10 @@ always @(posedge axi_clk or negedge axi_clk_rst_n) begin
         frame_ready <= 1'b0;
     end else if (wr_sw) begin
         rd_bank     <= wr_bank;                        // publish finished bank
-        wr_bank     <= (wr_bank == 2'd2) ? 2'd0 : (wr_bank + 1'b1);
+        // read-lock: never advance onto the bank the display is reading
+        // (60 fps write vs 60.09 fps read leaves only ~50 us of margin)
+        if ((wr_bank == 2'd2 ? 2'd0 : wr_bank + 1'b1) != rd_bank)
+            wr_bank <= (wr_bank == 2'd2) ? 2'd0 : (wr_bank + 1'b1);
         frame_ready <= 1'b1;
     end
 end

@@ -295,8 +295,8 @@ frame_buffer #(
     .START_ADDR     (28'h0000000),
     .BURST_LEN      (8'd127),
     .FB_NUM         (3),
-    .MAX_VID_WIDTH  (1920),
-    .MAX_VID_HIGHT  (1080)
+    .MAX_VID_WIDTH  (1280),
+    .MAX_VID_HIGHT  (720)
 ) u_frame_buffer (
     .axi_clk        (core_clk),
     .rst_n          (video_rst_n),
@@ -313,14 +313,14 @@ frame_buffer #(
     .o_de           (fb_de),
     .vout           (fb_vout),
 
-    .H_FRONT_PORCH  (13'd44),
-    .H_SYNC         (13'd22),
-    .H_VALID        (13'd960),
-    .H_BACK_PORCH   (13'd74),
-    .V_FRONT_PORCH  (13'd4),
+    .H_FRONT_PORCH  (13'd55),
+    .H_SYNC         (13'd20),
+    .H_VALID        (13'd640),
+    .H_BACK_PORCH   (13'd110),
+    .V_FRONT_PORCH  (13'd5),
     .V_SYNC         (13'd5),
-    .V_VALID        (13'd1080),
-    .V_BACK_PORCH   (13'd36),
+    .V_VALID        (13'd720),
+    .V_BACK_PORCH   (13'd20),
 
     .awid           (fb_awid),
     .awaddr         (fb_awaddr),
