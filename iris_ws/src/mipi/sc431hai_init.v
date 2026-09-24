@@ -81,7 +81,7 @@ sc431hai_i2c_rom u_rom (
 );
 
 i2c_subsystem #(
-    .DATA_LENGTH        (161),
+    .DATA_LENGTH        (163),
     .I2C_REG_ADDR_WIDTH (16),
     .I2C_DATA_WIDTH     (8),
     .I2C_DEVICE_ADDR    (8'h60),

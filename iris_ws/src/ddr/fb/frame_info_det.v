@@ -31,15 +31,16 @@ localparam  AXI_DATA_BYTE = AXI_DDR_WIDTH/8;
   reg						[23:0] 				frame_len_d2 = 'd0; 
   reg [31:0] 									total_frame_bytes = 'd0;
 
-  always @( posedge clk )
+  // negtive_sync: 1 = VS is active-low (frame edge on neg_vs).
+  // Sample i_vs only while DE is high (VS and DE are otherwise exclusive).
+  // Was a blocking/non-blocking mix with no reset -- unify to NBA + reset.
+  always @( posedge clk or negedge rst_n )
   begin
-		if( i_de ) begin
-			if( i_vs )
-				negtive_sync <= 1'b1;
-			else
-				negtive_sync = 1'b0;
-		end
-  end 
+		if( !rst_n )
+			negtive_sync <= 1'b0;
+		else if( i_de )
+			negtive_sync <= i_vs;
+  end
 
   always @( posedge clk )
   begin

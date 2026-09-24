@@ -283,6 +283,7 @@ wire [1:0]   fb_bresp;
 
 wire [15:0]  fb_vout;
 wire         fb_hs, fb_vs, fb_de;
+wire         fb_wr_sw;
 
 frame_buffer #(
     .I_VID_WIDTH    (32),
@@ -316,10 +317,10 @@ frame_buffer #(
     .H_SYNC         (13'd22),
     .H_VALID        (13'd960),
     .H_BACK_PORCH   (13'd74),
-    .V_FRONT_PORCH  (13'd20),
+    .V_FRONT_PORCH  (13'd4),
     .V_SYNC         (13'd5),
     .V_VALID        (13'd1080),
-    .V_BACK_PORCH   (13'd20),
+    .V_BACK_PORCH   (13'd36),
 
     .awid           (fb_awid),
     .awaddr         (fb_awaddr),
@@ -367,7 +368,8 @@ frame_buffer #(
     .test_rd_fifo_rddata (),
     .test_wdata          (),
     .test_rdata          (),
-    .test_BURST_LEN      ()
+    .test_BURST_LEN      (),
+    .o_wr_sw             (fb_wr_sw)
 );
 
 assign fb_rid = fb_rid8[5:0];
@@ -378,6 +380,34 @@ assign fb_bid = fb_bid8[5:0];
 //=====================================================================
 wire        dbg_vs_o, dbg_hs_o, dbg_de_o, dbg_val_o;
 wire [47:0] dbg_rgb;
+wire [2:0]  awb_r_gain, awb_g_gain, awb_b_gain;
+wire [31:0] awb_sum_r, awb_sum_g, awb_sum_b;
+wire        awb_upd;
+
+// Gray-world AWB: stats on debayer RGB, gains feed rgb_gain (same clock).
+awb_stats u_awb_stats (
+    .clk     (hdmi_tx_half_clk),
+    .rst_n   (video_rst_n),
+    .i_de    (dbg_de_o),
+    .i_vs    (dbg_vs_o),
+    .i_rgb   (dbg_rgb),
+    .o_sum_r (awb_sum_r),
+    .o_sum_g (awb_sum_g),
+    .o_sum_b (awb_sum_b),
+    .o_upd   (awb_upd)
+);
+
+awb_ctrl u_awb_ctrl (
+    .clk      (hdmi_tx_half_clk),
+    .rst_n    (video_rst_n),
+    .i_upd    (awb_upd),
+    .i_sum_r  (awb_sum_r),
+    .i_sum_g  (awb_sum_g),
+    .i_sum_b  (awb_sum_b),
+    .o_r_gain (awb_r_gain),
+    .o_g_gain (awb_g_gain),
+    .o_b_gain (awb_b_gain)
+);
 
 debayer_top_2to1 u_debayer (
     .in_pclk     (hdmi_tx_half_clk),
@@ -387,6 +417,12 @@ debayer_top_2to1 u_debayer (
     .raw_de_i    (fb_de),
     .raw_valid_i (fb_de),
     .raw_datax4_i({fb_vout[7:0], fb_vout[15:8]}),
+    // AWB temporarily pinned to unity: tests whether the grey-world gains
+    // (applied per byte_0/byte_1 in rgb_gain) cause the 2-px vertical stripes.
+    // Revert to awb_*_gain once the stripe root cause is confirmed.
+    .i_r_gain    (3'd4),
+    .i_g_gain    (3'd4),
+    .i_b_gain    (3'd4),
     .rgb_vs_o    (dbg_vs_o),
     .rgb_hs_o    (dbg_hs_o),
     .rgb_de_o    (dbg_de_o),
@@ -458,10 +494,77 @@ always @(posedge hdmi_tx_slow_clk or negedge video_rst_n) begin
 end
 
 //=====================================================================
+// Camera FPS: two 1 s gates on core_clk.
+//   sens_fps : mipi_vsync edges = true sensor output rate  -> OSD left
+//   wr_fps   : fb_wr_sw edges   = DDR frame-write rate     -> OSD right
+//   The pair separates "sensor slow" from "write path dropping frames".
+//=====================================================================
+wire [7:0] sens_fps, wr_fps;
+wire       sens_upd, wr_upd;
+
+// mipi_vsync lives in mipi_pixel_clk; 2-FF sync into core_clk
+reg [2:0] vs_sync;
+always @(posedge core_clk or negedge video_rst_n) begin
+    if (!video_rst_n) vs_sync <= 3'b000;
+    else              vs_sync <= {vs_sync[1:0], mipi_vsync};
+end
+
+fps_counter #(
+    .CLK_FREQ_HZ (100_000_000)
+) u_fps_sensor (
+    .clk         (core_clk),
+    .rst_n       (video_rst_n),
+    .frame_pulse (vs_sync[2]),
+    .fps         (sens_fps),
+    .upd_toggle  (sens_upd)
+);
+
+fps_counter #(
+    .CLK_FREQ_HZ (100_000_000)
+) u_fps_wr (
+    .clk         (core_clk),
+    .rst_n       (video_rst_n),
+    .frame_pulse (fb_wr_sw),
+    .fps         (wr_fps),
+    .upd_toggle  (wr_upd)
+);
+
+//=====================================================================
 // HDMI TX (our TMDS encoder)
 //=====================================================================
 localparam SWAP_RB   = 1'b1;    // 1: blue<-red, red<-blue
 localparam SWAP_HSVS = 1'b0;    // 1: hsync<-vs, vsync<-hs
+
+wire [23:0] px_osd1, px_osd;
+
+// left  : sensor fps (mipi_vsync)   right : write fps (wr_sw)
+osd_fps #(
+    .X_START (16)
+) u_osd_sensor (
+    .clk       (hdmi_tx_slow_clk),
+    .rst_n     (video_rst_n),
+    .i_hs      (hs_r),
+    .i_vs      (vs_r),
+    .i_de      (de_r),
+    .i_rgb     (px_r),
+    .i_fps     (sens_fps),
+    .i_fps_upd (sens_upd),
+    .o_rgb     (px_osd1)
+);
+
+osd_fps #(
+    .X_START (56)
+) u_osd_wr (
+    .clk       (hdmi_tx_slow_clk),
+    .rst_n     (video_rst_n),
+    .i_hs      (hs_r),
+    .i_vs      (vs_r),
+    .i_de      (de_r),
+    .i_rgb     (px_osd1),
+    .i_fps     (wr_fps),
+    .i_fps_upd (wr_upd),
+    .o_rgb     (px_osd)
+);
 
 wire [9:0] tmds_data0;
 wire [9:0] tmds_data1;
@@ -482,9 +585,9 @@ dvi_encoder dvi_encoder_m0
 (
     .pixelclk   (hdmi_tx_slow_clk),
     .rstin      (~video_rst_n),
-    .blue_din   (SWAP_RB   ? px_r[23:16] : px_r[7:0]),
-    .green_din  (px_r[15:8]),
-    .red_din    (SWAP_RB   ? px_r[7:0]   : px_r[23:16]),
+    .blue_din   (SWAP_RB   ? px_osd[23:16] : px_osd[7:0]),
+    .green_din  (px_osd[15:8]),
+    .red_din    (SWAP_RB   ? px_osd[7:0]   : px_osd[23:16]),
     .hsync      (SWAP_HSVS ? vs_r : hs_r),
     .vsync      (SWAP_HSVS ? hs_r : vs_r),
     .de         (de_r),
@@ -724,9 +827,12 @@ always @(posedge core_clk or negedge video_rst_n) begin
     end
 end
 
-assign led[0] = dbg_de_cnt[10];
-assign led[1] = fb_de_cnt[10];
+// led[0] = sensor/wr fps mismatch (on => write path dropping frames)
+// led[1] = wr_fps   >= 32        led[3] = sens_fps >= 32
+// led[2] = hdmi_tx_locked
+assign led[0] = (sens_fps != wr_fps);
+assign led[1] = wr_fps[5];
 assign led[2] = hdmi_tx_locked;
-assign led[3] = dbg_hs_cnt[10];
+assign led[3] = sens_fps[5];
 
 endmodule

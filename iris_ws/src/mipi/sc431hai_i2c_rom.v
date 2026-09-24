@@ -1,7 +1,10 @@
 //=====================================================================
 // SC431HAI MIPI camera initialisation table (device specific)
-//   161 entries of {reg_addr[15:0], data[7:0], rw} @ 0x00..0xA0
+//   163 entries of {reg_addr[15:0], data[7:0], rw} @ 0x00..0xA2
 //   1920x1080 RAW10, 4-lane, stream on (0x0100=0x01)
+//   VTS=1150 (~39 fps target), exposure 512 half-lines.
+//   Array window / output crop kept at the vendor defaults (0x3200-0x3207
+//   semantics undocumented; changing them broke the output width).
 //   Consumed by i2c_subsystem (src/i2c).
 //   Implemented as a registered case-ROM (no BRAM init dependency).
 //=====================================================================
@@ -135,8 +138,8 @@ begin
         8'h71: rdata_out <= {16'h393d,8'h02,1'b0};
         8'h72: rdata_out <= {16'h393e,8'h80,1'b0};
         8'h73: rdata_out <= {16'h3e00,8'h00,1'b0};
-        8'h74: rdata_out <= {16'h3e01,8'hba,1'b0};
-        8'h75: rdata_out <= {16'h3e02,8'hd0,1'b0};
+        8'h74: rdata_out <= {16'h3e01,8'h20,1'b0};
+        8'h75: rdata_out <= {16'h3e02,8'h00,1'b0};
         8'h76: rdata_out <= {16'h3e16,8'h00,1'b0};
         8'h77: rdata_out <= {16'h3e17,8'hc5,1'b0};
         8'h78: rdata_out <= {16'h3e18,8'h00,1'b0};
@@ -180,6 +183,8 @@ begin
         8'h9e: rdata_out <= {16'h3211,8'h44,1'b0};
         8'h9f: rdata_out <= {16'h3212,8'h00,1'b0};
         8'ha0: rdata_out <= {16'h3213,8'h05,1'b0};
+        8'ha1: rdata_out <= {16'h320e,8'h04,1'b0};
+        8'ha2: rdata_out <= {16'h320f,8'h7e,1'b0};
         default: rdata_out <= {ROM_SIZE{1'b0}};
     endcase
 end

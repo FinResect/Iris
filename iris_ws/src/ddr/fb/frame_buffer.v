@@ -87,8 +87,9 @@ input 												bvalid,
 output  											bready,
 output			[31:0]								test_rd_fifo_rddata,   
 output	[31:0]								        test_wdata,
-output	[31:0]								        test_rdata,
-output [7:0] test_BURST_LEN
+output	[31:0]									test_rdata,
+output [7:0] test_BURST_LEN,
+output       o_wr_sw // one pulse per completed frame write (axi_clk)
 );
 assign test_BURST_LEN = BURST_LEN;
 //=============================================================
@@ -217,7 +218,8 @@ ddr_buffer #(
 /*i*/.rd_fifo_rden		(rd_fifo_rden     ),
 
 /*o*/.test_wdata(test_wdata ),
-/*o*/.test_rdata(test_rdata ),    
+/*o*/.test_rdata(test_rdata ),
+    .o_wr_sw    ( o_wr_sw   ),
     .awid			  ( awid			),
     .awaddr			( awaddr		),
     .awlen			( awlen			),

@@ -87,7 +87,8 @@ input [5:0] 									bid,
 input 											bvalid,
 output  										bready,
 
-output [7:0] test_BURST_LEN
+output [7:0] test_BURST_LEN,
+output       o_wr_sw  // one pulse per completed frame write (axi_clk)
 );
 assign test_BURST_LEN = BURST_LEN;
 
@@ -219,7 +220,7 @@ ddr_rd_buffer # (
 //   demo's wr_sw/rd_sw alternation, which mis-aligns when the read rate (60 fps)
 //   differs from the write rate (30 fps).
 //=====================================================================================
-localparam [31:0] BANK_STRIDE = 32'h001FB000;   // 1920*1080*1 rounded up to 4 KB
+localparam [31:0] BANK_STRIDE = 32'h001FC000;   // 1920*1080*1 + 4 KB guard
 
 function [AXI_ADDR_WIDTH-1:0] bank_addr;
     input [1:0] b;
@@ -235,6 +236,7 @@ assign wr_start_addr = bank_addr(wr_bank);
 assign rd_start_addr = bank_addr(rd_bank);
 assign wr_sw_ack     = wr_sw;
 assign rd_sw_ack     = rd_sw;
+assign o_wr_sw       = wr_sw;
 
 always @(posedge axi_clk or negedge axi_clk_rst_n) begin
     if (!axi_clk_rst_n) begin

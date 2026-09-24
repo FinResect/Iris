@@ -8,17 +8,18 @@ module debayer_top_2to1
 	input			raw_de_i,
 	input			raw_valid_i,
 	input	[15:0]	raw_datax4_i,
-	
+
+	// per-channel white-balance gains (3-bit, 4 = 1.0x), gray-world driven
+	input	[2:0]	i_r_gain,
+	input	[2:0]	i_g_gain,
+	input	[2:0]	i_b_gain,
+
 	output				rgb_vs_o,
 	output				rgb_hs_o,
 	output				rgb_de_o,
 	output				rgb_valid_o,
 	output	[24*2-1:0]	rgb_datax2_o //b,g,r,b,g,r
 );
-wire [2:0]w_r_gain,w_g_gain,w_b_gain;
-assign	w_r_gain	= 3'd4;	//3'd7;
-assign	w_g_gain	= 3'd4;	//3'd4;
-assign	w_b_gain	= 3'd4;	//3'd6;
 
 wire	        w_gain_vs;
 wire	        w_gain_hs;
@@ -42,9 +43,10 @@ inst_rgb_gain
 	.i_data		(raw_datax4_i	),
 
 	
-	.blue_gain	(w_r_gain		),
-	.green_gain	(w_g_gain		),
-	.red_gain	(w_b_gain		),
+	// port names follow sensor-channel intent: red_gain applies to R cells
+	.blue_gain	(i_r_gain		),
+	.green_gain	(i_g_gain		),
+	.red_gain	(i_b_gain		),
 	
 	.o_hs		(w_gain_hs		),
 	.o_vs		(w_gain_vs		),

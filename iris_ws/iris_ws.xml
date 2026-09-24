@@ -19,11 +19,15 @@
         <efx:design_file name="src/mipi/sensor_clipper.v" version="default" library="default" />
         <efx:design_file name="src/video/true_dual_port_ram.v" version="default" library="default" />
         <efx:design_file name="src/video/afifo_simple.v" version="default" library="default" />
+        <efx:design_file name="src/video/osd/fps_counter.v" version="default" library="default" />
+        <efx:design_file name="src/video/osd/osd_fps.v" version="default" library="default" />
         <efx:design_file name="src/video/frame_buf.v" version="default" library="default" />
         <efx:design_file name="src/video/debayer/debayer_top_2to1.v" version="default" library="default" />
         <efx:design_file name="src/video/debayer/line_buffer.v" version="default" library="default" />
         <efx:design_file name="src/video/debayer/raw_to_rgb.v" version="default" library="default" />
         <efx:design_file name="src/video/debayer/rgb_gain.v" version="default" library="default" />
+        <efx:design_file name="src/video/debayer/awb_stats.v" version="default" library="default" />
+        <efx:design_file name="src/video/debayer/awb_ctrl.v" version="default" library="default" />
         <efx:design_file name="src/mipi/sc431hai_i2c_rom.v" version="default" library="default" />
         <efx:design_file name="src/mipi/sc431hai_init.v" version="default" library="default" />
         <efx:design_file name="src/i2c/timescale.v" version="default" library="default" />

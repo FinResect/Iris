@@ -7,14 +7,32 @@
 // This bridge time-multiplexes AW and AR onto that shared channel.
 // The W, B and R channels are wired straight through in top.v.
 //
-// Because the efx_ddr3_axi controller is driven strictly sequentially by
-// its own reference host (memory_checker_axi: write -> wait bvalid ->
-// read -> wait rlast), this bridge additionally serializes WHOLE
-// transactions.  A read address is only accepted once the previous write
-// burst has completed (B response observed), and a write address is only
-// accepted once the previous read burst has completed (R last observed).
-// This prevents write data from colliding with a concurrent read command
-// on the controller's single command queue.
+// The controller's internals contain independent AW/AR FSMs and address
+// queues plus outstanding-transaction counters (outflow/iris_ws.map.v:
+//   r_aw_state / r_ar_state, u_wr_addr_fifo / u_rd_addr_fifo,
+//   r_wr_b_count[8:0] / r_rlast_cnt[15:0], top_mc/fifo_aw / fifo_ar),
+// so overlapping read and write bursts are fully supported.  The only
+// hardware limit is one address transfer per clk on the shared axi_a*
+// bus (plus at most a one-cycle direction turnaround).
+//
+// This module therefore does nothing but time-multiplex the two address
+// channels.  Read is granted first whenever it asks, because the display
+// read path is real-time (data_tx holds only a half-line FIFO) while the
+// write path has an 8.5-line WR FIFO fed by a slow sensor.  Read-side
+// address-bus occupancy is <0.1% (one address per 14.8us against a
+// 100MHz bus), so the writer can never starve.
+//
+// An earlier version of this module serialized WHOLE transactions (wait
+// for B before accepting AR, wait for RLAST before accepting AW, and
+// hard-prioritised writes).  That pattern was copied from a reference
+// host's habit, not from any controller requirement, and it blocked the
+// display read for the duration of every write burst.
+//
+// The bvalid/bready/rvalid/rlast/rready ports are kept so the top-level
+// wiring is unchanged, but they are no longer observed here: response
+// tracking lives in the controller's outstanding counters, and this
+// bridge does not need a completion event to pick the next address.
+// bready/rready are driven by the frame buffer on the top-level side.
 //=====================================================================
 module axi_atype_bridge #(
     parameter IDW = 4,
@@ -31,7 +49,7 @@ module axi_atype_bridge #(
     input  wire [1:0]      s_awburst,
     input  wire [0:0]      s_awlock,
     input  wire            s_awvalid,
-    output reg             s_awready,
+    output wire            s_awready,
 
     // master read address (standard AXI4)
     input  wire [IDW-1:0]  s_arid,
@@ -41,20 +59,21 @@ module axi_atype_bridge #(
     input  wire [1:0]      s_arburst,
     input  wire [0:0]      s_arlock,
     input  wire            s_arvalid,
-    output reg             s_arready,
+    output wire            s_arready,
 
     // shared address channel to the DDR3 controller
-    output reg  [7:0]      m_aid,
-    output reg  [AW-1:0]   m_aaddr,
-    output reg  [7:0]      m_alen,
-    output reg  [2:0]      m_asize,
-    output reg  [1:0]      m_aburst,
-    output reg  [1:0]      m_alock,
-    output reg             m_atype,     // 1 = write, 0 = read
-    output reg             m_avalid,
+    output wire [7:0]      m_aid,
+    output wire [AW-1:0]   m_aaddr,
+    output wire [7:0]      m_alen,
+    output wire [2:0]      m_asize,
+    output wire [1:0]      m_aburst,
+    output wire [1:0]      m_alock,
+    output wire            m_atype,     // 1 = write, 0 = read
+    output wire            m_avalid,
     input  wire            m_aready,
 
     // transaction completion observation (W/B/R wired through in top.v)
+    // unused -- see header
     input  wire            bvalid,
     input  wire            bready,
     input  wire            rvalid,
@@ -62,93 +81,21 @@ module axi_atype_bridge #(
     input  wire            rready
 );
 
-    localparam S_IDLE    = 3'd0,
-               S_AW      = 3'd1,   // write address handshake in progress
-               S_AW_REL  = 3'd2,   // wait for master to drop awvalid
-               S_WAIT_WR = 3'd3,   // wait for the write burst response (B)
-               S_AR      = 3'd4,   // read address handshake in progress
-               S_AR_REL  = 3'd5,   // wait for master to drop arvalid
-               S_WAIT_RD = 3'd6;   // wait for the read burst last (R last)
+    // Read wins whenever both channels ask.
+    wire sel_ar = s_arvalid;
+    wire sel_aw = s_awvalid & ~s_arvalid;
 
-    reg [2:0] state;
+    assign s_awready = sel_aw & m_aready;
+    assign s_arready = sel_ar & m_aready;
 
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            state     <= S_IDLE;
-            s_awready <= 1'b0;
-            s_arready <= 1'b0;
-            m_avalid  <= 1'b0;
-            m_aid     <= 8'd0;
-            m_aaddr   <= {AW{1'b0}};
-            m_alen    <= 8'd0;
-            m_asize   <= 3'd0;
-            m_aburst  <= 2'd0;
-            m_alock   <= 2'd0;
-            m_atype   <= 1'b0;
-        end else begin
-            case (state)
-                S_IDLE: begin
-                    s_awready <= 1'b0;
-                    s_arready <= 1'b0;
-                    if (s_awvalid) begin
-                        m_aid    <= {{(8-IDW){1'b0}}, s_awid};
-                        m_aaddr  <= s_awaddr;
-                        m_alen   <= s_awlen;
-                        m_asize  <= s_awsize;
-                        m_aburst <= s_awburst;
-                        m_alock  <= {1'b0, s_awlock};
-                        m_atype  <= 1'b1;
-                        m_avalid <= 1'b1;
-                        state    <= S_AW;
-                    end else if (s_arvalid) begin
-                        m_aid    <= {{(8-IDW){1'b0}}, s_arid};
-                        m_aaddr  <= s_araddr;
-                        m_alen   <= s_arlen;
-                        m_asize  <= s_arsize;
-                        m_aburst <= s_arburst;
-                        m_alock  <= {1'b0, s_arlock};
-                        m_atype  <= 1'b0;
-                        m_avalid <= 1'b1;
-                        state    <= S_AR;
-                    end
-                end
-                S_AW: begin
-                    if (m_aready) begin
-                        m_avalid  <= 1'b0;
-                        s_awready <= 1'b1;
-                        state     <= S_AW_REL;
-                    end
-                end
-                S_AW_REL: begin
-                    if (!s_awvalid) begin
-                        s_awready <= 1'b0;
-                        state     <= S_WAIT_WR;
-                    end
-                end
-                S_WAIT_WR: begin
-                    if (bvalid && bready)
-                        state <= S_IDLE;
-                end
-                S_AR: begin
-                    if (m_aready) begin
-                        m_avalid  <= 1'b0;
-                        s_arready <= 1'b1;
-                        state     <= S_AR_REL;
-                    end
-                end
-                S_AR_REL: begin
-                    if (!s_arvalid) begin
-                        s_arready <= 1'b0;
-                        state     <= S_WAIT_RD;
-                    end
-                end
-                S_WAIT_RD: begin
-                    if (rvalid && rlast && rready)
-                        state <= S_IDLE;
-                end
-                default: state <= S_IDLE;
-            endcase
-        end
-    end
+    assign m_avalid = sel_aw | sel_ar;
+    assign m_atype  = sel_aw;
+
+    assign m_aid    = sel_aw ? {{(8-IDW){1'b0}}, s_awid}  : {{(8-IDW){1'b0}}, s_arid};
+    assign m_aaddr  = sel_aw ? s_awaddr                   : s_araddr;
+    assign m_alen   = sel_aw ? s_awlen                    : s_arlen;
+    assign m_asize  = sel_aw ? s_awsize                   : s_arsize;
+    assign m_aburst = sel_aw ? s_awburst                  : s_arburst;
+    assign m_alock  = sel_aw ? {1'b0, s_awlock}           : {1'b0, s_arlock};
 
 endmodule
